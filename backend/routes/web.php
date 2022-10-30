@@ -16,3 +16,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+//documentation and api testing using swagger
+Route::get('/docs', function () {
+    return view('swagger.index');
+});
