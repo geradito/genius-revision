@@ -1,55 +1,193 @@
-swagger: '2.0'
+openapi: 3.0.3
 info:
-  description: Genius REvision APIs
+  title: Genius Revision - OpenAPI 3.0
+  description: |-
+    This is a Genius Revision Server based on the OpenAPI 3.0 specification.
+    Some useful links:
+    - [The Genius Revision repository](https://github.com/swagger-api/swagger-petstore)
+    - [Developer Profile](https://enrollzambia.com/geraldchinyama/)
+  contact:
+    email: chinyamagerald@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.0
-  title: Genious Revision Frontend API's
-basePath: /api/
+servers:
+  - url: http://localhost:8000/api
 tags:
-  - name: Category
-    description: Manage Category
-
+  - name: category
+    description: Category Resource
+  - name: subject
+    description: subject Resource
+  - name: question
+    description: question Resource
 paths:
   /categories:
     get:
       tags:
-        - Category
-      summary: Manage Category
-      description: 'Manage Category with this API'
-      operationId: category
-      consumes:
-        - application/json
-      produces:
-        - application/json
+        - category
+      summary: Fetch all categories
+      description: Returns all categories
       responses:
         '200':
           description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Category'
         '400':
-          description: Bad request
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+          
+  /categories/{categoryId}/subjects:
+    get:
+      tags:
+        - category
+      summary: Fetch subjects by category by ID
+      description: Returns subjects
+      operationId: getCategoryById
+      parameters:
+        - name: categoryId
+          in: path
+          description: ID of categoryId to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subject'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Subject'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+    
+  /subjects/{subjectId}/questions:
+    get:
+      tags:
+        - subject
+      summary: Fetch Questions by subject ID
+      description: Returns subjects
+      operationId: subjectId
+      parameters:
+        - name: subjectId
+          in: path
+          description: ID of subject to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Question'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found  
+          
+  /quizzes:
     post:
       tags:
-        - Category
-      summary: Create Category
-      description: 'Create Category with this API'
-      operationId: createCategory
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: query
-          name: name
-          type: string
-          required: true  
+        - question
+      summary: Fetch next question in quiz
+      description: Returns subjects
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                previous_questions:          
+                  type: array
+                  items:
+                    type: integer
+                quiz_subject:  
+                  type: integer
       responses:
         '200':
           description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Question'
         '400':
-          description: Bad request
-      security:
-        - api_key: [] 
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found  
+components:
+  schemas:
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: Primary School
+      xml:
+        name: category
+    Subject:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: Mathematics
+      xml:
+        name: category
 
-securityDefinitions:
-  api_key:
-    type: apiKey
-    name: Authorization
-    in: header
+    Question:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        question:
+          type: string
+          example: Who is the third President of Zambia?
+        option1:
+          type: string
+          example: Kaunda
+        option2:
+          type: string
+          example: Lungu
+        option3:
+          type: string
+          example: Chiluba
+        option4:
+          type: string
+          example: Mwanawasa
+        answer:
+          type: string
+          example: Mwanawasa
+      xml:
+        name: question
+    
