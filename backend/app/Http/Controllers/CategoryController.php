@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Category;
 
 class CategoryController extends Controller
 {
@@ -14,6 +15,8 @@ class CategoryController extends Controller
     public function index()
     {
         //
+        $categories = Category::all();
+        return $categories;
     }
 
     /**
@@ -24,6 +27,7 @@ class CategoryController extends Controller
     public function create()
     {
         //
+        return view('category.create');
     }
 
     /**
@@ -34,7 +38,19 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+             //Validation the Data
+            $validatedData = $request->validate([
+                'name' => ['required','max:255'],
+            ],
+            [
+                'name.required' => 'Category name is required',
+                'name.max' => 'Category name should not be greater than 255 characters.',
+            ]);
+
+        $category = new Category();
+        $category->name = $request->name;
+        $category->save();
+        return redirect('categories');
     }
 
     /**
