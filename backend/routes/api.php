@@ -19,4 +19,5 @@ use App\Http\Controllers\CategoryController;
 //     return $request->user();
 // });
  
-Route::get('/categories', [CategoryController::class, 'index']);  
+Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/categories/{id}/subjects', [CategoryController::class, 'showSubjects']);  

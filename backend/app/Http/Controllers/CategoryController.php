@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Models\Subject;
 
 class CategoryController extends Controller
 {
@@ -62,6 +63,20 @@ class CategoryController extends Controller
     public function show($id)
     {
         //
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showSubjects($id)
+    {
+        //
+        $subjects = Subject::where('category_id', $id)->get();
+        return $subjects;
+       
     }
 
     /**
