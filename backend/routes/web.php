@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\GradeController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\QuestionController;
 
@@ -26,5 +27,6 @@ Route::get('/docs', function () {
 });
 
 Route::resource('categories', CategoryController::class);
+Route::resource('grades', GradeController::class);
 Route::resource('subjects', SubjectController::class);
 Route::resource('questions', QuestionController::class);

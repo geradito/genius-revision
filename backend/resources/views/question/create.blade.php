@@ -21,42 +21,42 @@
         </div>
         <div class="form-group">
           <label for="">Question</label>
-          <input type="text" name="question" id="question" class="form-control" placeholder="Question">
+          <input type="text" name="question" id="question" value="{{ old('question') }}" class="form-control" placeholder="Question">
             @if($errors->has('question'))
                 <div class="error">{{ $errors->first('question') }}</div>
             @endif
         </div>
         <div class="form-group">
           <label for="">Option A</label>
-          <input type="text" name="option_a" id="option_a" class="form-control" placeholder="Option A">
+          <input type="text" name="option_a" id="option_a" value="{{ old('option_a') }}" class="form-control" placeholder="Option A">
             @if($errors->has('option_a'))
                 <div class="error">{{ $errors->first('option_a') }}</div>
             @endif             
         </div>
         <div class="form-group">
           <label for="">Option B</label>
-          <input type="text" name="option_b" id="option_a" class="form-control" placeholder="Option B">
+          <input type="text" name="option_b" id="option_a" value="{{ old('option_b') }}" class="form-control" placeholder="Option B">
             @if($errors->has('option_b'))
                 <div class="error">{{ $errors->first('option_b') }}</div>
             @endif             
         </div>
         <div class="form-group">
           <label for="">Option C</label>
-          <input type="text" name="option_c" id="option_c" class="form-control" placeholder="Option C">
+          <input type="text" name="option_c" id="option_c" value="{{ old('option_c') }}" class="form-control" placeholder="Option C">
             @if($errors->has('option_c'))
                 <div class="error">{{ $errors->first('option_c') }}</div>
             @endif             
         </div>
         <div class="form-group">
           <label for="">Option D</label>
-          <input type="text" name="option_d" id="option_d" class="form-control" placeholder="Option D">
+          <input type="text" name="option_d" id="option_d" value="{{ old('option_d') }}" class="form-control" placeholder="Option D">
             @if($errors->has('option_d'))
                 <div class="error">{{ $errors->first('option_d') }}</div>
             @endif             
         </div>
         <div class="form-group">
           <label for="">Answer</label>
-          <input type="text" name="answer" id="answer" class="form-control" placeholder="Answer">
+          <input type="text" name="answer" id="answer" value="{{ old('answer') }}" class="form-control" placeholder="Answer">
             @if($errors->has('answer'))
                 <div class="error">{{ $errors->first('answer') }}</div>
             @endif             

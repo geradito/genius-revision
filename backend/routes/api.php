@@ -3,6 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\GradeController;
+use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\QuestionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,4 +23,9 @@ use App\Http\Controllers\CategoryController;
 // });
  
 Route::get('/categories', [CategoryController::class, 'index']);
-Route::get('/categories/{id}/subjects', [CategoryController::class, 'showSubjects']);  
+Route::get('/categories/{id}/subjects', [CategoryController::class, 'showSubjects']); 
+Route::get('/categories/{id}/grades', [CategoryController::class, 'showGrades']);  
+Route::get('/grades/{id}/subjects', [GradeController::class, 'showSubjects']); 
+Route::get('/subjects/{id}/questions', [SubjectController::class, 'showQuestions']);  
+Route::post('/subjects', [SubjectController::class, 'store']);  
+Route::post('/quizzes', [QuestionController::class, 'quiz']);  

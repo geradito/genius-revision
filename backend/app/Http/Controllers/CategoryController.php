@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Models\Grade;
 use App\Models\Subject;
 
 class CategoryController extends Controller
@@ -41,11 +42,11 @@ class CategoryController extends Controller
     {
              //Validation the Data
             $validatedData = $request->validate([
-                'name' => ['required','max:255'],
+                'name' => ['required','max:20'],
             ],
             [
                 'name.required' => 'Category name is required',
-                'name.max' => 'Category name should not be greater than 255 characters.',
+                'name.max' => 'Category name should not be greater than 20 characters.',
             ]);
 
         $category = new Category();
@@ -65,6 +66,19 @@ class CategoryController extends Controller
         //
     }
 
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showGrades($id)
+    {
+        //
+        $grades = Grade::where('category_id', $id)->get();
+        return $grades;
+       
+    }
     /**
      * Display the specified resource.
      *

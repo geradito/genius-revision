@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Subject;
 use App\Models\Question;
+use Redirect;
 
 class QuestionController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display az listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
@@ -41,12 +42,12 @@ class QuestionController extends Controller
     public function store(Request $request)
     {
         //
-        
+      
         $validatedData = $request->validate([
-            'question' => ['required','max:255'],
-            'option_a' => ['required','max:255'],
-            'option_b' => ['required','max:255'],
-            'option_c' => ['required','max:255'],
+            'question' => ['required','max:100'],
+            'option_a' => ['required','max:100'],
+            'option_b' => ['required','max:100'],
+            'option_c' => ['required','max:100'],
             'option_d' => ['required','max:255'],
             'answer' => ['required','max:255'],
             'subject_id' => ['required'],
@@ -60,6 +61,13 @@ class QuestionController extends Controller
             'option_c.required' => 'option c is required',
             'option_d.required' => 'option d is required',
         ]);
+        
+        if ($request->answer != $request->option_a && 
+            $request->answer != $request->option_b && 
+            $request->answer != $request->option_c && 
+            $request->answer != $request->option_d) {
+               return Redirect::back()->withErrors(['answer' => $request->answer.'-'.$request->option_a.' Answer is not part of the options!']);
+        }
 
         $question = new Question();
         $question->question = $request->question;
@@ -83,6 +91,25 @@ class QuestionController extends Controller
     public function show($id)
     {
         //
+    }
+    /**
+     * Display the specified resource.
+     *
+     * @param  Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function quiz(Request $request)
+    {
+        //
+        $validatedData = $request->validate([
+            'subject_id' => ['required'],
+        ],
+        [
+            'subject_id.required' => 'Subject Id is required',
+        ]);
+        $questionIds = explode(",", $request->previous_questions);
+        $questions = Question::where('subject_id',$request->subject_id)->whereNotIn('id', $questionIds)->first();
+        return $questions;
     }
 
     /**

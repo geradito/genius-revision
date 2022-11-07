@@ -14,6 +14,7 @@ info:
   version: 1.0.0
 servers:
   - url: http://localhost:8000/api
+  - url: http://192.168.79.203:8000/api
 tags:
   - name: category
     description: Category Resource
@@ -102,7 +103,37 @@ paths:
           description: Invalid ID supplied
         '404':
           description: Pet not found  
-          
+  /subjects:
+    post:
+      tags:
+        - subject
+      summary: Add subject to database
+      description: Add subject to database
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                category_id:  
+                  type: integer
+                name:  
+                  type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Question'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found          
   /quizzes:
     post:
       tags:
@@ -120,7 +151,7 @@ paths:
                   type: array
                   items:
                     type: integer
-                quiz_subject:  
+                subject_id:  
                   type: integer
       responses:
         '200':

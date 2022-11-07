@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Question;
 use App\Models\Subject;
 use App\Models\Category;
 
@@ -68,6 +69,19 @@ class SubjectController extends Controller
     public function show($id)
     {
         //
+    }
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showQuestions($id)
+    {
+        //
+        $questions = Question::where('subject_id', $id)->get();
+        return $questions;
+       
     }
 
     /**
