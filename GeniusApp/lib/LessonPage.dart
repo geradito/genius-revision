@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'LessonTwoPage.dart';
 import 'package:video_player/video_player.dart';
 
@@ -34,7 +35,31 @@ class _LessonPage extends State<LessonPage> {
       body:
       ListView(
         children: <Widget>[
-          _ButterFlyAssetVideo(videoUrl[2]),
+      Center(
+        child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children:  <Widget>[
+          Container(
+          alignment: Alignment.center,
+          padding: const EdgeInsets.all(10),
+            child: Text(
+              "Which body has the power to impeach the president?",
+              style: TextStyle(
+                letterSpacing: 1.5,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          Container(
+            alignment: Alignment.center,
+            padding: const EdgeInsets.all(10),
+            child: Image.asset('assets/imgs/bike.jpg',
+              width: 400,
+              height: 350,)
+            ),
+        ],
+      ),
+    ),    //  _ButterFlyAssetVideo(videoUrl[2]),
           Expanded(
             child:Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -52,7 +77,7 @@ class _LessonPage extends State<LessonPage> {
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>LessonTwoPage()));
                       },
                       child: Text(
-                        "Previous",
+                        "the Senate",
                         style: TextStyle(
                           color: Colors.white,
                           letterSpacing: 1.5,
@@ -60,7 +85,11 @@ class _LessonPage extends State<LessonPage> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 150),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
                     RaisedButton(
                       elevation: 5.0,
                       color: Colors.pink,
@@ -71,7 +100,7 @@ class _LessonPage extends State<LessonPage> {
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>LessonTwoPage()));
                       },
                       child: Text(
-                        "Next",
+                        "the House of Representatives",
                         style: TextStyle(
                           color: Colors.white,
                           letterSpacing: 1.5,
@@ -81,7 +110,53 @@ class _LessonPage extends State<LessonPage> {
                     ),
                   ],
                 ),
-              ],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    RaisedButton(
+                      elevation: 5.0,
+                      color: Colors.pink,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0)
+                      ),
+                      onPressed: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>LessonTwoPage()));
+                      },
+                      child: Text(
+                        "the Supreme Court",
+                        style: TextStyle(
+                          color: Colors.white,
+                          letterSpacing: 1.5,
+                          fontSize: MediaQuery.of(context).size.height / 40,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    RaisedButton(
+                      elevation: 5.0,
+                      color: Colors.pink,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0)
+                      ),
+                      onPressed: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>LessonTwoPage()));
+                      },
+                      child: Text(
+                        "The vice-president",
+                        style: TextStyle(
+                          color: Colors.white,
+                          letterSpacing: 1.5,
+                          fontSize: MediaQuery.of(context).size.height / 40,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+               ],
             ),
           )
         ],

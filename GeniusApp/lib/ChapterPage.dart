@@ -4,6 +4,7 @@ import 'LessonPage.dart';
 import 'LessonTwoPage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
+import 'config.dart' as config;
 
 class ChapterPage extends StatefulWidget {
   @override
@@ -36,7 +37,7 @@ class _ChapterPageState extends State<ChapterPage> {
   List<Subject> futureSubjects;
 
   Future<List<Subject>> fetchSubjects() async{
-    var url = 'http://192.168.79.203:8000/subjects';
+    var url = config.testURL+'/grades/1/subjects';
     final response = await http.get(url);
     if (response.statusCode == 200) {
       var responseData = convert.jsonDecode(response.body);
