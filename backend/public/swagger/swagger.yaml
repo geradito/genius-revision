@@ -14,10 +14,12 @@ info:
   version: 1.0.0
 servers:
   - url: http://localhost:8000/api
-  - url: http://192.168.79.203:8000/api
+  - url: http://192.168.43.203:8000/api
 tags:
   - name: category
     description: Category Resource
+  - name: grade
+    description: Grade Resource
   - name: subject
     description: subject Resource
   - name: question
@@ -44,6 +46,36 @@ paths:
         '404':
           description: Pet not found
           
+  /categories/{categoryId}/grades:
+    get:
+      tags:
+        - category
+      summary: Fetch grades by category by ID
+      description: Returns grades
+      operationId: getGradesById
+      parameters:
+        - name: categoryId
+          in: path
+          description: ID of categoryId to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subject'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Subject'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+          
   /categories/{categoryId}/subjects:
     get:
       tags:
@@ -55,6 +87,36 @@ paths:
         - name: categoryId
           in: path
           description: ID of categoryId to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subject'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Subject'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+    
+  /grades/{gradeId}/subjects:
+    get:
+      tags:
+        - grade
+      summary: Fetch Subject by grade ID
+      description: Returns subjects
+      operationId: gradeId
+      parameters:
+        - name: gradeId
+          in: path
+          description: ID of grade to return
           required: true
           schema:
             type: integer
@@ -102,7 +164,8 @@ paths:
         '400':
           description: Invalid ID supplied
         '404':
-          description: Pet not found  
+          description: Pet not found 
+          
   /subjects:
     post:
       tags:
@@ -126,10 +189,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Question'          
+                $ref: '#/components/schemas/Subject'          
             application/xml:
               schema:
-                $ref: '#/components/schemas/Question'
+                $ref: '#/components/schemas/Subject'
         '400':
           description: Invalid ID supplied
         '404':
@@ -181,6 +244,7 @@ components:
           example: Primary School
       xml:
         name: category
+  
     Subject:
       type: object
       properties:
@@ -193,7 +257,7 @@ components:
           example: Mathematics
       xml:
         name: category
-
+  
     Question:
       type: object
       properties:
