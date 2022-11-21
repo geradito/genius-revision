@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Subject extends Model
 {
     use HasFactory;
+
+    public function questions()
+    {
+        return $this->hasMany('App\Models\Question');
+    }
+    
+    public function grade()
+    {
+        return $this->belongsTo('App\Model\Grade');
+    }
 }

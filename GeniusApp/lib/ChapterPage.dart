@@ -5,6 +5,8 @@ import 'LessonTwoPage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'config.dart' as config;
+import 'package:get/get.dart';
+import 'controllers/QuizController.dart';
 
 class ChapterPage extends StatefulWidget {
   @override
@@ -29,15 +31,14 @@ class Subject {
 }
 class _ChapterPageState extends State<ChapterPage> {
   static const String _title = 'DNL Book App';
-  TextEditingController nameController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
 
   final List<Color> colorCodes = <Color>[Colors.greenAccent, Colors.redAccent, Colors.blueAccent];
 
   List<Subject> futureSubjects;
 
   Future<List<Subject>> fetchSubjects() async{
-    var url = config.testURL+'/grades/1/subjects';
+    QuizController  quizController= Get.put(QuizController());
+    var url = config.testURL+'/grades/'+quizController.gradeId.toString()+'/subjects';
     final response = await http.get(url);
     if (response.statusCode == 200) {
       var responseData = convert.jsonDecode(response.body);
@@ -60,6 +61,7 @@ class _ChapterPageState extends State<ChapterPage> {
 
   @override
   Widget build(BuildContext context) {
+    QuizController  quizController= Get.put(QuizController());
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -68,7 +70,7 @@ class _ChapterPageState extends State<ChapterPage> {
             onPressed: () {  Navigator.pop(context); },
             tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
           ),
-          title: Text("Select a Lesson"),
+          title: Text("Select Subject"),
           backgroundColor: Colors.blueAccent,
         ),
 
@@ -112,11 +114,8 @@ class _ChapterPageState extends State<ChapterPage> {
                                 itemBuilder: (BuildContext context, int index) {
                                   return GestureDetector(
                                     onTap: () {
-                                      if(index%2==0){
+                                        quizController.subjectId = snapshot.data[index].id;
                                         Navigator.push(context, MaterialPageRoute(builder: (context)=>LessonPage()));
-                                      }else{
-                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>LessonTwoPage()));
-                                      }
                                     },
                                     child: Card(
                                       color: Colors.white,

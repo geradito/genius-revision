@@ -114,8 +114,9 @@ class QuestionController extends Controller
         [
             'subject_id.required' => 'Subject Id is required',
         ]);
-        $questionIds = explode(",", $request->previous_questions);
-        $questions = Question::where('subject_id',$request->subject_id)->whereNotIn('id', $questionIds)->first();
+       // $questionIds = explode(",", $request->previous_questions);
+       $questionIds = $request->previous_questions;
+       $questions = Question::where('subject_id',$request->subject_id)->whereNotIn('id', $questionIds)->first();
         return $questions;
     }
 

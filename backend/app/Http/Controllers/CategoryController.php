@@ -17,7 +17,7 @@ class CategoryController extends Controller
     public function index()
     {
         //
-        $categories = Category::all();
+        $categories = Category::has('grades')->all();
         return $categories;
     }
 
@@ -75,7 +75,7 @@ class CategoryController extends Controller
     public function showGrades($id)
     {
         //
-        $grades = Grade::where('category_id', $id)->get();
+        $grades = Grade::has('subjects')->where('category_id', $id)->get();
         return $grades;
        
     }
@@ -88,7 +88,7 @@ class CategoryController extends Controller
     public function showSubjects($id)
     {
         //
-        $subjects = Subject::where('category_id', $id)->get();
+        $subjects = Subject::has('questions')->where('category_id', $id)->get();
         return $subjects;
        
     }

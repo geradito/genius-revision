@@ -17,7 +17,7 @@ class SubjectController extends Controller
     public function index()
     {
         //
-        $subjects = Subject::all();
+        $subjects = Subject::has('questions')->all();
         return $subjects;
     }
 

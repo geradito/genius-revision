@@ -2,6 +2,9 @@
 import 'package:flutter/material.dart';
 import 'SignUpPage.dart';
 import 'HomePage.dart';
+import 'package:get/get.dart';
+
+import 'controllers/UserAccountController.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -21,6 +24,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    UserAccountController userAccountController = Get.put(UserAccountController());
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomPadding: false,
@@ -91,6 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                                         borderRadius: BorderRadius.circular(30.0)
                                     ),
                                     onPressed: (){
+                                      userAccountController.username = entries[index];
                                       Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage()));
                                     },
                                     child: Text(

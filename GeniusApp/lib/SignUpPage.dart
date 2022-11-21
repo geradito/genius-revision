@@ -1,6 +1,8 @@
+import 'package:dnlbook/controllers/UserAccountController.dart';
 import 'package:flutter/material.dart';
 import 'HomePage.dart';
 import 'package:intl/intl.dart';
+import 'package:get/get.dart';
 
 class SignUpPage extends StatefulWidget{
   @override
@@ -33,14 +35,16 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Widget _buildEmailRow(){
+    UserAccountController userAccountController = Get.put(UserAccountController());
     return Padding(
       padding: EdgeInsets.all(8),
       child: TextFormField(
         keyboardType: TextInputType.text,
         onChanged: (value){
-          setState(() {
-            email = value;
-          });
+          // setState(() {
+          //   email = value;
+          // });
+          userAccountController.username = value;
         },
         decoration: InputDecoration(
           prefixIcon: Icon(
@@ -73,6 +77,7 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   _selectDate(BuildContext context) async {
+    UserAccountController userAccountController = Get.find();
     DateTime newSelectedDate = await showDatePicker(
         context: context,
         initialDate: _selectedDate != null ? _selectedDate : DateTime.now(),
@@ -97,7 +102,7 @@ class _SignUpPageState extends State<SignUpPage> {
       setState(() {
         _selectedDate = newSelectedDate;
       });
-
+      userAccountController.dateOfBirth = newSelectedDate;
     }
   }
 
