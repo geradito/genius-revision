@@ -97,7 +97,46 @@ class _ChapterPageState extends State<ChapterPage> {
                         child: CircularProgressIndicator(),
                       ),
                     );
-                  } else {
+                  }else
+                  if (snapshot.data.length == 0) {
+                    return Card(
+                      color: Colors.white,
+                      borderOnForeground: true,
+                      elevation: 10,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          ListTile(
+                            title: Text("Empty List",style: TextStyle(
+                              letterSpacing: 1.5,
+                              fontSize: MediaQuery.of(context).size.height / 40,
+                            )),
+                            subtitle: Text("Please Exercise patience as our team are adding more questions"),
+                          ),
+                          RaisedButton(
+                            elevation: 5.0,
+                            color: Colors.pink,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0)
+                            ),
+                            onPressed: () async{
+                              Navigator.pop(context);
+                              //  Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));
+                            },
+                            child: Text(
+                              "Go Back",
+                              style: TextStyle(
+                                color: Colors.white,
+                                letterSpacing: 1.5,
+                                fontSize: MediaQuery.of(context).size.height / 40,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  }
+                  else {
                     return ListView(
                         children: <Widget>[
                           Container(

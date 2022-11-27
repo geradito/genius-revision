@@ -38,6 +38,8 @@ dev_dependencies:
   flutter_countdown_timer: ^3.0.1
   assets_audio_player: ^2.0.15
   get:
+  sqflite:
+  path_provider:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

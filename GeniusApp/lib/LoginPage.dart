@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'SignUpPage.dart';
 import 'HomePage.dart';
 import 'package:get/get.dart';
-
 import 'controllers/UserAccountController.dart';
+import 'utils/DatabaseHelper.dart';
+import 'models/UserModel.dart';
+import 'package:sqflite/sqflite.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -16,14 +18,35 @@ class _LoginPageState extends State<LoginPage> {
   static const String _title = 'DNL Book App';
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  //final List<String> entries = <String>['Gerald', 'Musialike', 'Dumisani','Gerald', 'Musialike', 'Dumisani','Gerald', 'Musialike', 'Dumisani','Gerald', 'Musialike', 'Dumisani'];
-  final List<String> entries = <String>['Musialike'];
+
+  List<User> userList;
+  int count = 0;
 
   final List<Color> colorCodes = <Color>[Colors.greenAccent, Colors.redAccent, Colors.blueAccent];
 
 
+  void updateListView() {
+
+    DatabaseHelper databaseHelper = DatabaseHelper();
+    final Future<Database> dbFuture = databaseHelper.initializeDatabase();
+    dbFuture.then((database) {
+
+      Future<List<User>> userListFuture = databaseHelper.getUserList();
+      userListFuture.then((userList) {
+        setState(() {
+          this.userList = userList;
+          this.count = userList.length;
+        });
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (userList == null) {
+      userList = List<User>();
+      updateListView();
+    }
     UserAccountController userAccountController = Get.put(UserAccountController());
     return SafeArea(
       child: Scaffold(
@@ -83,23 +106,25 @@ class _LoginPageState extends State<LoginPage> {
                               scrollDirection: Axis.vertical,
                               shrinkWrap: true,
                               padding: const EdgeInsets.all(8),
-                              itemCount: entries.length,
+                              itemCount: count,
                               itemBuilder: (BuildContext context, int index) {
                                 return Container(
                                   height: 50,
                                   child: Center(child:
                                   RaisedButton(
                                     elevation: 5.0,
-                                    color: Colors.pink,
+                                    color: Colors.red[this.userList[index].level*200],
                                     shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(30.0)
                                     ),
                                     onPressed: (){
-                                      userAccountController.username = entries[index];
+                                      userAccountController.username = this.userList[index].name;
+                                      userAccountController.level = this.userList[index].level;
+                                      userAccountController.points = this.userList[index].points;
                                       Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage()));
                                     },
                                     child: Text(
-                                      entries[index],
+                                      this.userList[index].name+' - '+this.userList[index].points.toString()+'pts',
                                       style: TextStyle(
                                         color: Colors.white,
                                         letterSpacing: 1.5,

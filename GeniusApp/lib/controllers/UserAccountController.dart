@@ -2,13 +2,26 @@ import 'package:get/get.dart';
 
 class UserAccountController extends GetxController{
   String _username;
-  int _level = 1;
+  int _level ;
   DateTime _dateOfBirth;
+  int _points = 0;
 
   int get level => _level;
 
+  int get points => _points;
+
   set level(int value) {
     _level = value;
+    update();
+  }
+
+
+  set points(int points) {
+    _points = points;
+    update();
+  }
+  void increasePoints(int points) {
+    _points += points;
     update();
   }
 

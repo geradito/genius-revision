@@ -1,8 +1,13 @@
+import 'package:dnlbook/LoginPage.dart';
 import 'package:dnlbook/controllers/UserAccountController.dart';
 import 'package:flutter/material.dart';
-import 'HomePage.dart';
-import 'package:intl/intl.dart';
+import 'config.dart' as config;
+import 'dart:convert' as convert;
 import 'package:get/get.dart';
+import 'models/LevelModel.dart';
+import 'utils/DatabaseHelper.dart';
+import 'models/UserModel.dart';
+import 'package:http/http.dart' as http;
 
 class SignUpPage extends StatefulWidget{
   @override
@@ -14,6 +19,28 @@ class _SignUpPageState extends State<SignUpPage> {
 
   String email, password;
   DateTime _selectedDate= DateTime.now();
+  DatabaseHelper helper = DatabaseHelper();
+  int dropdownvalue;
+
+  Future<List<Level>> fetchLevels() async{
+    UserAccountController userAccountController = Get.put(UserAccountController());
+
+    var url = config.testURL+'/categories';
+    final response = await http.get(url);
+    List<Level> levels = [];
+    if (response.statusCode == 200) {
+      var responseData = convert.jsonDecode(response.body);
+      //Creating a list to store input data;
+      for (var data in responseData) {
+        Level level = Level(
+            id: data["id"],
+            name: data["name"]);
+        //Adding user to the list.
+        levels.add(level);
+      }
+    }
+    return levels;
+  }
 
   Widget _buildLogo(){
     return Row(
@@ -39,6 +66,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return Padding(
       padding: EdgeInsets.all(8),
       child: TextFormField(
+        maxLength: 10,
         keyboardType: TextInputType.text,
         onChanged: (value){
           // setState(() {
@@ -57,56 +85,49 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
     );
   }
-  Widget _buildDOBRow(){
-    return Padding(
-      padding: EdgeInsets.all(8),
-      child: Text(DateFormat('dd-MM-yyyy').format(_selectedDate)),
-    );
-  }
 
   Widget _buildPasswordRow(){
-    return Padding(
-      padding: EdgeInsets.all(8),
-      child: OutlinedButton(
-        onPressed: () {
-          _selectDate(context);
-    },
-    child: const Text('Date of Birth'),
-    ),
-    );
-  }
 
-  _selectDate(BuildContext context) async {
-    UserAccountController userAccountController = Get.find();
-    DateTime newSelectedDate = await showDatePicker(
-        context: context,
-        initialDate: _selectedDate != null ? _selectedDate : DateTime.now(),
-        firstDate: DateTime(1920),
-        lastDate: DateTime(2040),
-        builder: (BuildContext context, Widget child) {
-          return Theme(
-            data: ThemeData.dark().copyWith(
-              colorScheme: ColorScheme.dark(
-                primary: Colors.deepPurple,
-                onPrimary: Colors.white,
-                surface: Colors.blueGrey,
-                onSurface: Colors.yellow,
-              ),
-              dialogBackgroundColor: Colors.blue[500],
-            ),
-            child: child,
+    UserAccountController userAccountController = Get.put(UserAccountController());
+    // List of items in our dropdown menu
+    return  FutureBuilder<List<Level>>(
+      future: fetchLevels(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          var data = snapshot.data;
+          return DropdownButton<int>(
+            // Initial Value
+            value: dropdownvalue,
+            // Down Arrow Icon
+            icon: const Icon(Icons.keyboard_arrow_down),
+            hint: Text('Choose option'),
+
+            // Array list of items
+            items: data.map((Level item) {
+              return DropdownMenuItem(
+                value: item.id,
+                child: Text(item.name),
+              );
+            }).toList(),
+            // After selecting the desired option,it will
+            // change button value to selected value
+            onChanged: (int newVal) {
+              setState(() {
+                print("Selected city is "+newVal.toString());
+                dropdownvalue = newVal;
+                userAccountController.level = dropdownvalue;
+              });
+            },
           );
-        });
-
-    if (newSelectedDate != null) {
-      setState(() {
-        _selectedDate = newSelectedDate;
-      });
-      userAccountController.dateOfBirth = newSelectedDate;
-    }
+        } else {
+          return const CircularProgressIndicator();
+        }
+      },
+    );
   }
 
 Widget _buildLoginButton(){
+  UserAccountController userAccountController = Get.find();
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -122,8 +143,15 @@ Widget _buildLoginButton(){
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0)
                 ),
-                onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage()));
+                onPressed: () async{
+                  User user= new User(userAccountController.username, userAccountController.level, dropdownvalue*100);
+                  int result = await helper.insertUser(user);
+                  if (result != 0) {  // Success
+                    _showAlertDialog('Status', 'User Saved Successfully');
+                  } else {  // Failure
+                    _showAlertDialog('Status', 'Problem Saving User');
+                  }
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));
                 },
                 child: Text(
                   "Sign Up",
@@ -137,6 +165,18 @@ Widget _buildLoginButton(){
             )
         )
       ],
+    );
+  }
+
+  void _showAlertDialog(String title, String message) {
+
+    AlertDialog alertDialog = AlertDialog(
+      title: Text(title),
+      content: Text(message),
+    );
+    showDialog(
+        context: context,
+        builder: (_) => alertDialog
     );
   }
 
@@ -173,7 +213,6 @@ Widget _buildLoginButton(){
                 ),
                 _buildEmailRow(),
                 _buildPasswordRow(),
-                _buildDOBRow(),
                 SizedBox(height: 20,),
                 _buildLoginButton(),
               ],

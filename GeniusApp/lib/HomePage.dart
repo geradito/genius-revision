@@ -31,12 +31,13 @@ class Grade {
   }
 }
 class _HomePageState extends State<HomePage> {
-  static const String _title = config.currentCategoryName;
 
   List<Grade> futureGrades;
+  String title ;
 
   Future<List<Grade>> fetchGrades() async{
     UserAccountController userAccountController = Get.put(UserAccountController());
+    title = userAccountController.username+' - '+userAccountController.points.toString()+'pts';
 
     var url = config.testURL+'/categories/'+userAccountController.level.toString()+'/grades';
     final response = await http.get(url);
@@ -83,18 +84,56 @@ class _HomePageState extends State<HomePage> {
                         child: CircularProgressIndicator(),
                       ),
                     );
-                  } else {
+                  }else
+                  if (snapshot.data.length == 0) {
+                    return Card(
+                      color: Colors.white,
+                      borderOnForeground: true,
+                      elevation: 10,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          ListTile(
+                            title: Text("Empty List",style: TextStyle(
+                              letterSpacing: 1.5,
+                              fontSize: MediaQuery.of(context).size.height / 40,
+                            )),
+                               subtitle: Text("Please Exercise patience as our team are adding more questions"),
+                          ),
+                          RaisedButton(
+                            elevation: 5.0,
+                            color: Colors.pink,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0)
+                            ),
+                            onPressed: () async{
+                              Navigator.pop(context);
+                              //  Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));
+                            },
+                            child: Text(
+                              "Go Back",
+                              style: TextStyle(
+                                color: Colors.white,
+                                letterSpacing: 1.5,
+                                fontSize: MediaQuery.of(context).size.height / 40,
+                              ),
+                            ),
+                          )
+                          ],
+                      ),
+                    );
+                  }else {
                     return ListView(
                             children: <Widget>[
                               Container(
                                   alignment: Alignment.center,
                                   padding: const EdgeInsets.all(10),
-                                  child: const Text(
-                                    _title,
+                                  child: Text(
+                                    title,
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.w500,
-                                        fontSize: 30),
+                                        fontSize: 25),
                                   )),
                         Container(
                             height: MediaQuery.of(context).size.height,
@@ -126,7 +165,7 @@ class _HomePageState extends State<HomePage> {
                                         letterSpacing: 1.5,
                                         fontSize: MediaQuery.of(context).size.height / 40,
                                       )),
-                                      subtitle: Text("Genius: Gerald, Prev: Musialike" /*${snapshot.data[index].name}"*/),
+                                   //   subtitle: Text("Genius: Gerald, Prev: Musialike" /*${snapshot.data[index].name}"*/),
                                     ),
                                     // Row(
                                     //   mainAxisAlignment: MainAxisAlignment.end,
@@ -159,12 +198,6 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     ) ;
-    // return MaterialApp(
-    //   title: _title,
-    //   home: Scaffold(
-    //     appBar: AppBar(title: const Text(_title)),
-    //     body: const MyStatefulWidget(),
-    //   ),
-    // );
+
   }
 }
