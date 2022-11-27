@@ -116,8 +116,11 @@ class QuestionController extends Controller
         ]);
        // $questionIds = explode(",", $request->previous_questions);
        $questionIds = $request->previous_questions;
-       $questions = Question::where('subject_id',$request->subject_id)->whereNotIn('id', $questionIds)->first();
-        return $questions;
+       $question = Question::where('subject_id',$request->subject_id)->whereNotIn('id', $questionIds)->first();
+       if($question ==null){
+        return "[]";
+       }
+       return $question;
     }
 
     /**

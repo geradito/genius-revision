@@ -17,7 +17,7 @@ class CategoryController extends Controller
     public function index()
     {
         //
-        $categories = Category::has('grades')->all();
+        $categories = Category::has('grades')->get();
         return $categories;
     }
 
