@@ -58,7 +58,7 @@ class GradeController extends Controller
             $grade->name = $request->name;
             $grade->category_id = $request->category_id;
             $grade->save();
-            return redirect('grades');
+            return redirect('grades/create');
     }
 
     /**

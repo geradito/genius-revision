@@ -86,7 +86,7 @@ class QuestionController extends Controller
         $question->answer = $request->answer;
         $question->subject_id = $request->subject_id;
         $question->save();
-        return redirect('questions');
+        return redirect()->back()->with('message', 'Saved Succesfully!');
     }
 
     /**

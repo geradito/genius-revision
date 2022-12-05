@@ -48,13 +48,20 @@ class DatabaseHelper{
       Database db = await this.database;
 
       // var result = await db.rawQuery('SELECT * FROM $userTable');
-      var result = await db.query(userTable);
+      var result = await db.query(userTable, orderBy: '$colPoints DESC');
       return result;
    }
 
   Future<int> insertUser(User user) async{
     Database db =  await this.database;
     var result = db.insert(userTable, user.toMap());
+    return result;
+  }
+
+
+  Future<int> updateUser(User user) async{
+    Database db =  await this.database;
+    var result = db.update(userTable, user.toMap(), where:'$colId = ?', whereArgs: [user.id]);
     return result;
   }
 

@@ -29,6 +29,17 @@
             @endif
         </div>
         <div class="form-group">
+          <label for="">Grade</label>
+            <select name="grade_id" id="grade_id">
+                @foreach($grades as $item)
+                    <option value="{{$item->id}}">{{$item->name}}</option>
+                @endforeach
+            </select> 
+         @if($errors->has('name'))
+                <div class="error">{{ $errors->first('name') }}</div>
+            @endif
+        </div>
+        <div class="form-group">
             <button type="submit" class="btn btn-primary">Submit</button>
         </div>
     </form>

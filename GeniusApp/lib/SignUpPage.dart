@@ -144,7 +144,7 @@ Widget _buildLoginButton(){
                     borderRadius: BorderRadius.circular(30.0)
                 ),
                 onPressed: () async{
-                  User user= new User(userAccountController.username, userAccountController.level, dropdownvalue*100);
+                  User user= new User(userAccountController.username, userAccountController.level, 2);
                   int result = await helper.insertUser(user);
                   if (result != 0) {  // Success
                     _showAlertDialog('Status', 'User Saved Successfully');

@@ -29,8 +29,15 @@ class _ResultPage extends State<ResultPage> {
                   child:
                   Column(
                     children: [
-                      Image.asset('assets/imgs/trophy.png'),
-                      Text("Congratulations!", style: TextStyle(
+                      Text("Result", style: TextStyle(
+                          fontSize: 40,
+                          foreground: Paint()
+                            ..style = PaintingStyle.stroke
+                            ..strokeWidth = 4
+                            ..color = Colors.cyan)),
+                      Opacity(opacity: quizController.score<50?0.0:1.0,
+                      child:Image.asset('assets/imgs/trophy.png'),),
+                      Text(quizController.score<30? "You Can Improve":"Congratulations!", style: TextStyle(
                           fontSize: 40,
                           foreground: Paint()
                             ..style = PaintingStyle.stroke
@@ -57,7 +64,7 @@ class _ResultPage extends State<ResultPage> {
                             LoginPage()), (Route<dynamic> route) => false);
                         },
                         child: Text(
-                          "Return Home",
+                          "Finish",
                           style: TextStyle(
                             color: Colors.white,
                             letterSpacing: 1.5,

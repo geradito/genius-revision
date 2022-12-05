@@ -1,3 +1,4 @@
+import 'package:dnlbook/utils/DatabaseHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'HomePage.dart';
@@ -13,6 +14,8 @@ import 'package:get/get.dart';
 import 'controllers/QuizController.dart';
 import 'controllers/UserAccountController.dart';
 import 'dart:io';
+import 'models/UserModel.dart';
+import 'package:sqflite/sqflite.dart';
 
 class LessonPage extends StatefulWidget{
   @override
@@ -58,7 +61,6 @@ class Question {
 class _LessonPage extends State<LessonPage> {
 
 
-  int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 2400;
 
   List<Question> futureGrades;
 
@@ -101,6 +103,19 @@ class _LessonPage extends State<LessonPage> {
     }
   }
 
+  void updateUserPoints(int points) async{
+    UserAccountController userAccountController = Get.find();
+
+    DatabaseHelper databaseHelper = DatabaseHelper();
+    User user= new User.withId(userAccountController.userId,userAccountController.username, userAccountController.level, userAccountController.points);
+    int result = await databaseHelper.updateUser(user);
+    if (result != 0) {  // Success
+    //  _showAlertDialog('Status', 'You have earned $points');
+    } else {  // Failure
+    //  _showAlertDialog('Status', 'Problem Saving User');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     QuizController  quizController= Get.put(QuizController());
@@ -117,9 +132,7 @@ class _LessonPage extends State<LessonPage> {
             Navigator.pop(context); },
           tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
         ),
-        title: CountdownTimer(
-          endTime: endTime,
-        ),
+        title: Text(quizController.subjectName),
         backgroundColor: Colors.blueAccent,
       ),
 
@@ -127,6 +140,7 @@ class _LessonPage extends State<LessonPage> {
       FutureBuilder(
         future: fetchQuestions(),
         builder: (BuildContext ctx, AsyncSnapshot snapshot) {
+          int newPoints =0;
           if (snapshot.data == null) {
             return Container(
               child: Center(
@@ -136,6 +150,21 @@ class _LessonPage extends State<LessonPage> {
           }
           else
           if(snapshot.data.length == 0){
+              if(quizController.score >= 60){
+                newPoints = 10;
+              }else if(quizController.score >= 50 && quizController.score < 60){
+                newPoints =5;
+              }else if(quizController.score >= 40 && quizController.score < 50){
+                newPoints =4;
+              }else if(quizController.score >= 30 && quizController.score < 40){
+                newPoints =3;
+              }else if(quizController.score >= 20 && quizController.score < 30){
+                newPoints =2;
+              }else if(quizController.score >= 10 && quizController.score < 20){
+                newPoints =1;
+              }
+            userAccountController.increasePoints(newPoints);
+            updateUserPoints(newPoints);
              return Card(
                color: Colors.white,
                borderOnForeground: true,
@@ -148,7 +177,7 @@ class _LessonPage extends State<LessonPage> {
                        letterSpacing: 1.5,
                        fontSize: MediaQuery.of(context).size.height / 40,
                      )),
-                     subtitle: Text("Lets view your results"),
+                     subtitle: Text(newPoints==0? "Lets now view your results":"You have earned $newPoints, Lets now view your results"),
                    ),
                    RaisedButton(
                      elevation: 5.0,
@@ -360,4 +389,16 @@ class _LessonPage extends State<LessonPage> {
   redirect() {
     Navigator.push(context, MaterialPageRoute(builder: (context)=>LessonPage()));
   }
+  void _showAlertDialog(String title, String message) {
+
+    AlertDialog alertDialog = AlertDialog(
+      title: Text(title),
+      content: Text(message),
+    );
+    showDialog(
+        context: context,
+        builder: (_) => alertDialog
+    );
+  }
+
 }

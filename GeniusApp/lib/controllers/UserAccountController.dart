@@ -1,6 +1,14 @@
 import 'package:get/get.dart';
 
 class UserAccountController extends GetxController{
+  int _userId;
+
+  int get userId => _userId;
+
+  set userId(int value) {
+    _userId = value;
+  }
+
   String _username;
   int _level ;
   DateTime _dateOfBirth;

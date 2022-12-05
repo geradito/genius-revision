@@ -5,6 +5,7 @@ class QuizController extends GetxController{
   int _categoryId = 0;
   int _gradeId = 0;
   int _subjectId = 0;
+  String _subjectName;
   int _quizId = 0;
   String _question = "";
   String _diagram = "";
@@ -13,8 +14,14 @@ class QuizController extends GetxController{
   String _optionC = "";
   String _optionD = "";
   String _answer = "";
-
   int _score = 0;
+
+
+  String get subjectName => _subjectName;
+
+  set subjectName(String value) {
+    _subjectName = value;
+  }
 
   int get score => _score;
 

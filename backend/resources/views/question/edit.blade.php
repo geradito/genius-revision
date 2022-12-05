@@ -1,4 +1,3 @@
-+*
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,12 +25,12 @@
             </select> 
         </div>
         <div class="form-group">
-          <label for="">Question</label>
-          <input type="text" name="question" id="question" value="{{ $question->question }}" class="form-control" placeholder="Question">
+          <label for="">Question</label><br>
+          <textarea name="question" id="question" cols="60" rows="2" class="form-control">{{ $question->question }}</textarea>
             @if($errors->has('question'))
                 <div class="error">{{ $errors->first('question') }}</div>
             @endif
-        </div>
+        </div><br>
         <image src="/public/Image/{{$question->diagram}}" width='100'>
          <div class="form-group">
           <label for="">Image</label>
@@ -39,42 +38,42 @@
             @if($errors->has('image'))
                 <div class="error">{{ $errors->first('image') }}</div>
             @endif
-        </div>
+        </div><br>
         <div class="form-group">
-          <label for="">Option A</label>
-          <input type="text" name="option_a" id="option_a" value="{{ $question->option_a }}" class="form-control" placeholder="Option A">
+          <label for="">Option A</label><br>
+          <textarea name="option_a" id="option_a" cols="60" rows="2" class="form-control">{{ $question->option_a }}</textarea>
             @if($errors->has('option_a'))
                 <div class="error">{{ $errors->first('option_a') }}</div>
             @endif             
-        </div>
+        </div><br>
         <div class="form-group">
-          <label for="">Option B</label>
-          <input type="text" name="option_b" id="option_a" value="{{ $question->option_b }}" class="form-control" placeholder="Option B">
+          <label for="">Option B</label><br>
+          <textarea name="option_b" id="option_b" cols="60" rows="2" class="form-control">{{ $question->option_b }}</textarea>
             @if($errors->has('option_b'))
                 <div class="error">{{ $errors->first('option_b') }}</div>
             @endif             
-        </div>
+        </div><br>
         <div class="form-group">
-          <label for="">Option C</label>
-          <input type="text" name="option_c" id="option_c" value="{{ $question->option_c }}" class="form-control" placeholder="Option C">
+          <label for="">Option C</label><br>
+          <textarea name="option_c" id="option_c" cols="60" rows="2" class="form-control">{{ $question->option_c }}</textarea>
             @if($errors->has('option_c'))
                 <div class="error">{{ $errors->first('option_c') }}</div>
             @endif             
-        </div>
+        </div><br>
         <div class="form-group">
-          <label for="">Option D</label>
-          <input type="text" name="option_d" id="option_d" value="{{ $question->option_d }}" class="form-control" placeholder="Option D">
+          <label for="">Option D</label><br>
+          <textarea name="option_d" id="option_d" cols="60" rows="2" class="form-control">{{ $question->option_d }}</textarea>
             @if($errors->has('option_d'))
                 <div class="error">{{ $errors->first('option_d') }}</div>
             @endif             
-        </div>
+        </div><br>
         <div class="form-group">
-          <label for="">Answer</label>
-          <input type="text" name="answer" id="answer" value="{{ $question->answer }}" class="form-control" placeholder="Answer">
+          <label for="">Answer</label><br>
+          <textarea name="answer" id="answer" cols="60" rows="2" class="form-control">{{ $question->answer }}</textarea>
             @if($errors->has('answer'))
                 <div class="error">{{ $errors->first('answer') }}</div>
             @endif             
-        </div>
+        </div><br>
         <div class="form-group">
             <button type="submit" class="btn btn-primary">Submit</button>
         </div>

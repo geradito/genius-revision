@@ -154,6 +154,7 @@ class _ChapterPageState extends State<ChapterPage> {
                                   return GestureDetector(
                                     onTap: () {
                                         quizController.subjectId = snapshot.data[index].id;
+                                        quizController.subjectName = snapshot.data[index].name;
                                         Navigator.push(context, MaterialPageRoute(builder: (context)=>LessonPage()));
                                     },
                                     child: Card(

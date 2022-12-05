@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Question;
 use App\Models\Subject;
 use App\Models\Category;
+use App\Models\Grade;
 
 class SubjectController extends Controller
 {
@@ -17,7 +18,7 @@ class SubjectController extends Controller
     public function index()
     {
         //
-        $subjects = Subject::has('questions')->all();
+        $subjects = Subject::has('questions')->get();
         return $subjects;
     }
 
@@ -30,7 +31,8 @@ class SubjectController extends Controller
     {
         //
         $categories = Category::all();
-        return view('subject.create')->with(['categories'=>$categories]);
+        $grades = Grade::all();
+        return view('subject.create')->with(['categories'=>$categories,'grades'=>$grades]);
     }
 
     /**
@@ -46,16 +48,19 @@ class SubjectController extends Controller
           $validatedData = $request->validate([
                 'name' => ['required','max:255'],
                 'category_id' => ['required'],
+                'grade_id' => ['required'],
             ],
             [
                 'name.required' => 'Subject name is required',
                 'name.max' => 'Subject name should not be greater than 255 characters.',
                 'category_id.required' => 'category id is required',
+                'grade_id.required' => 'grade id is required',
             ]);
 
         $subject = new Subject();
         $subject->name = $request->name;
         $subject->category_id = $request->category_id;
+        $subject->grade_id = $request->grade_id;
         $subject->save();
         return redirect('subjects');
     }

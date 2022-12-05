@@ -15,7 +15,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  static const String _title = 'DNL Book App';
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
@@ -118,6 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                                         borderRadius: BorderRadius.circular(30.0)
                                     ),
                                     onPressed: (){
+                                      userAccountController.userId = this.userList[index].id;
                                       userAccountController.username = this.userList[index].name;
                                       userAccountController.level = this.userList[index].level;
                                       userAccountController.points = this.userList[index].points;
