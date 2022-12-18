@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'ChapterPage.dart';
 import 'package:http/http.dart' as http;
@@ -7,6 +6,12 @@ import 'config.dart' as config;
 import 'package:get/get.dart';
 import 'controllers/UserAccountController.dart';
 import 'controllers/QuizController.dart';
+
+// TODO: Import ad_helper.dart
+import 'utils/AdHelper.dart';
+
+// TODO: Import google_mobile_ads.dart
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -35,12 +40,56 @@ class _HomePageState extends State<HomePage> {
   List<Grade> futureGrades;
   String title ;
 
+  // TODO: Add _bannerAd
+  BannerAd _bannerAd;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // TODO: Load a banner ad
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: AdRequest(),
+      size: AdSize.banner,
+      listener:
+      BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _bannerAd = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          ad.dispose();
+        },
+      ),
+    ).load();
+  }
+  @override
+  void dispose() {
+    // TODO: Dispose a BannerAd object
+    _bannerAd?.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
+  // TODO: Add _kAdIndex
+  static final _kAdIndex = 1;
+
+// TODO: Add _getDestinationItemIndex()
+  int _getDestinationItemIndex(int rawIndex) {
+    if (rawIndex >= _kAdIndex && _bannerAd != null) {
+      return rawIndex - 1;
+    }
+    return rawIndex;
+  }
+
+
   Future<List<Grade>> fetchGrades() async{
     UserAccountController userAccountController = Get.put(UserAccountController());
     title = userAccountController.username+' - '+userAccountController.points.toString()+'pts';
 
     var url = config.testURL+'/categories/'+userAccountController.level.toString()+'/grades';
-    final response = await http.get(url);
+    final response = await http.get(Uri.parse(url));
     List<Grade> grades = [];
     if (response.statusCode == 200) {
       var responseData = convert.jsonDecode(response.body);
@@ -56,13 +105,20 @@ class _HomePageState extends State<HomePage> {
     return grades;
   }
 
+  final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
+      primary: Colors.purple,
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      textStyle: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold)
+  );
   @override
   Widget build(BuildContext context) {
     QuizController quizController = Get.put(QuizController());
     return SafeArea(
       child: Scaffold(
-        resizeToAvoidBottomPadding: false,
-        backgroundColor: Color(0xfff2f3f7),
+        resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.greenAccent,
         body: Stack(
           children: <Widget>[
             Container(
@@ -100,12 +156,8 @@ class _HomePageState extends State<HomePage> {
                             )),
                                subtitle: Text("Please Exercise patience as our team are adding more questions"),
                           ),
-                          RaisedButton(
-                            elevation: 5.0,
-                            color: Colors.pink,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30.0)
-                            ),
+                          ElevatedButton(
+                            style: raisedButtonStyle,
                             onPressed: () async{
                               Navigator.pop(context);
                               //  Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));
@@ -145,46 +197,57 @@ class _HomePageState extends State<HomePage> {
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
                           padding: const EdgeInsets.all(8),
-                          itemCount: snapshot.data.length,
+                          itemCount: snapshot.data.length+ (_bannerAd != null ? 1 : 0),
                           itemBuilder: (BuildContext context, int index) {
-                            return GestureDetector(
-                              onTap: () {
-                                //signup screen
-                                quizController.gradeId = snapshot.data[index].id;
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>ChapterPage()));
-                              },
-                              child: Card(
-                                color: Colors.white,
-                                borderOnForeground: true,
-                                elevation: 10,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    ListTile(
-                                      title: Text(snapshot.data[index].name,style: TextStyle(
-                                        letterSpacing: 1.5,
-                                        fontSize: MediaQuery.of(context).size.height / 40,
-                                      )),
-                                   //   subtitle: Text("Genius: Gerald, Prev: Musialike" /*${snapshot.data[index].name}"*/),
-                                    ),
-                                    // Row(
-                                    //   mainAxisAlignment: MainAxisAlignment.end,
-                                    //   children: <Widget>[
-                                    //     TextButton(
-                                    //       child: const Text('Dail'),
-                                    //       onPressed: () {/* ... */},
-                                    //     ),
-                                    //     const SizedBox(width: 8),
-                                    //     TextButton(
-                                    //       child: const Text('Call History'),
-                                    //       onPressed: () {/* ... */},
-                                    //     ),
-                                    //   ],
-                                    // ),
-                                  ],
+                            // TODO: Render a banner ad
+                            if (_bannerAd != null && index == 0) {
+                              return Container(
+                                width: _bannerAd.size.width.toDouble(),
+                                height: 72.0,
+                                alignment: Alignment.center,
+                                child: AdWidget(ad: _bannerAd),
+                              );
+                            }else{
+                              return GestureDetector(
+                                onTap: () {
+                                  //signup screen
+                                  quizController.gradeId = snapshot.data[_getDestinationItemIndex(index)].id;
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ChapterPage()));
+                                },
+                                child: Card(
+                                  color: Colors.white,
+                                  borderOnForeground: true,
+                                  elevation: 10,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      ListTile(
+                                        title: Text(snapshot.data[_getDestinationItemIndex(index)].name,style: TextStyle(
+                                          letterSpacing: 1.5,
+                                          fontSize: MediaQuery.of(context).size.height / 40,
+                                        )),
+                                        //   subtitle: Text("Genius: Gerald, Prev: Musialike" /*${snapshot.data[index].name}"*/),
+                                      ),
+                                      // Row(
+                                      //   mainAxisAlignment: MainAxisAlignment.end,
+                                      //   children: <Widget>[
+                                      //     TextButton(
+                                      //       child: const Text('Dail'),
+                                      //       onPressed: () {/* ... */},
+                                      //     ),
+                                      //     const SizedBox(width: 8),
+                                      //     TextButton(
+                                      //       child: const Text('Call History'),
+                                      //       onPressed: () {/* ... */},
+                                      //     ),
+                                      //   ],
+                                      // ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
+
+                            }
                           },
                           separatorBuilder: (BuildContext context, int index) => const Divider(),
                         )

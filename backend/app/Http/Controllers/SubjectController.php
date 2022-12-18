@@ -32,7 +32,8 @@ class SubjectController extends Controller
         //
         $categories = Category::all();
         $grades = Grade::all();
-        return view('subject.create')->with(['categories'=>$categories,'grades'=>$grades]);
+        $subjects = Subject::all();
+        return view('subject.create')->with(['categories'=>$categories,'grades'=>$grades,'subjects'=>$subjects]);
     }
 
     /**
@@ -47,22 +48,21 @@ class SubjectController extends Controller
           //Validation the Data
           $validatedData = $request->validate([
                 'name' => ['required','max:255'],
-                'category_id' => ['required'],
                 'grade_id' => ['required'],
             ],
             [
                 'name.required' => 'Subject name is required',
                 'name.max' => 'Subject name should not be greater than 255 characters.',
-                'category_id.required' => 'category id is required',
                 'grade_id.required' => 'grade id is required',
             ]);
 
         $subject = new Subject();
         $subject->name = $request->name;
-        $subject->category_id = $request->category_id;
+        $subject->category_id = Grade::where('id',$request->grade_id)->first()['category_id'];
         $subject->grade_id = $request->grade_id;
-        $subject->save();
-        return redirect('subjects');
+        //$subject->save();
+        return $subject;
+        //return redirect('subjects');
     }
 
     /**

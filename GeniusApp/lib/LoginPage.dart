@@ -8,6 +8,12 @@ import 'utils/DatabaseHelper.dart';
 import 'models/UserModel.dart';
 import 'package:sqflite/sqflite.dart';
 
+// TODO: Import ad_helper.dart
+import 'utils/AdHelper.dart';
+
+// TODO: Import google_mobile_ads.dart
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -24,6 +30,38 @@ class _LoginPageState extends State<LoginPage> {
   final List<Color> colorCodes = <Color>[Colors.greenAccent, Colors.redAccent, Colors.blueAccent];
 
 
+// TODO: Add _bannerAd
+  BannerAd _bannerAd;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // TODO: Load a banner ad
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: AdRequest(),
+      size: AdSize.banner,
+      listener:
+      BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _bannerAd = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          ad.dispose();
+        },
+      ),
+    ).load();
+  }
+  @override
+  void dispose() {
+    // TODO: Dispose a BannerAd object
+    _bannerAd?.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
   void updateListView() {
 
     DatabaseHelper databaseHelper = DatabaseHelper();
@@ -40,6 +78,13 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
+      primary: Colors.purple,
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      textStyle: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold)
+  );
   @override
   Widget build(BuildContext context) {
     if (userList == null) {
@@ -49,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
     UserAccountController userAccountController = Get.put(UserAccountController());
     return SafeArea(
       child: Scaffold(
-        resizeToAvoidBottomPadding: false,
+        resizeToAvoidBottomInset: false,
         backgroundColor: Color(0xfff2f3f7),
         body: Stack(
           children: <Widget>[
@@ -69,6 +114,18 @@ class _LoginPageState extends State<LoginPage> {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 1.0),
+                  child: Center(
+                    child: Container(
+                        width: 200,
+                        height: 150,
+                        /*decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(50.0)),*/
+                        child: Image.asset('assets/imgs/trophy.png')),
+                  ),
+                ),
                 Container(
                     alignment: Alignment.center,
                     padding: const EdgeInsets.all(10),
@@ -78,7 +135,8 @@ class _LoginPageState extends State<LoginPage> {
                           color: Colors.white,
                           fontWeight: FontWeight.w500,
                           fontSize: 30),
-                    )),
+                    )
+                ),
                 Container(
                     alignment: Alignment.center,
                     padding: const EdgeInsets.all(10),
@@ -94,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                             Radius.circular(20)
                         ),
                         child:Container(
-                            height: MediaQuery.of(context).size.height * 0.6,
+                            height: MediaQuery.of(context).size.height * 0.5,
                             width: MediaQuery.of(context).size.width * 0.8,
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -110,12 +168,8 @@ class _LoginPageState extends State<LoginPage> {
                                 return Container(
                                   height: 50,
                                   child: Center(child:
-                                  RaisedButton(
-                                    elevation: 5.0,
-                                    color: Colors.red[this.userList[index].level*200],
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(30.0)
-                                    ),
+                                  ElevatedButton(
+                                   style: raisedButtonStyle,
                                     onPressed: (){
                                       userAccountController.userId = this.userList[index].id;
                                       userAccountController.username = this.userList[index].name;
@@ -143,7 +197,7 @@ class _LoginPageState extends State<LoginPage> {
                     const Text('Do not have an account?'),
                     TextButton(
                       child: const Text(
-                        'Sign up',
+                        'Sign Up Here',
                         style: TextStyle(fontSize: 20),
                       ),
                       onPressed: () {
@@ -154,6 +208,16 @@ class _LoginPageState extends State<LoginPage> {
                   ],
                   mainAxisAlignment: MainAxisAlignment.center,
                 ),
+                // TODO: Display a banner when ready
+                if (_bannerAd != null)
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      width: _bannerAd.size.width.toDouble(),
+                      height: _bannerAd.size.height.toDouble(),
+                      child: AdWidget(ad: _bannerAd),
+                    ),
+                  ),
                 ],
             ),
 
@@ -161,12 +225,5 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     ) ;
-    // return MaterialApp(
-    //   title: _title,
-    //   home: Scaffold(
-    //     appBar: AppBar(title: const Text(_title)),
-    //     body: const MyStatefulWidget(),
-    //   ),
-    // );
   }
 }

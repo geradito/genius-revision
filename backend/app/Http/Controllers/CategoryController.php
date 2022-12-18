@@ -29,7 +29,8 @@ class CategoryController extends Controller
     public function create()
     {
         //
-        return view('category.create');
+        $categories = Category::all();
+        return view('category.create',["categories"=>$categories]);
     }
 
     /**
@@ -52,7 +53,7 @@ class CategoryController extends Controller
         $category = new Category();
         $category->name = $request->name;
         $category->save();
-        return redirect('categories');
+        return redirect('categories/create');
     }
 
     /**

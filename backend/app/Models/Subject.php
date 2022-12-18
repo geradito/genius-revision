@@ -16,6 +16,6 @@ class Subject extends Model
     
     public function grade()
     {
-        return $this->belongsTo('App\Model\Grade');
+        return $this->belongsTo('App\Models\Grade');
     }
 }

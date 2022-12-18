@@ -9,6 +9,12 @@ import 'utils/DatabaseHelper.dart';
 import 'models/UserModel.dart';
 import 'package:http/http.dart' as http;
 
+// TODO: Import ad_helper.dart
+import 'utils/AdHelper.dart';
+
+// TODO: Import google_mobile_ads.dart
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+
 class SignUpPage extends StatefulWidget{
   @override
   _SignUpPageState createState() => _SignUpPageState();
@@ -22,11 +28,64 @@ class _SignUpPageState extends State<SignUpPage> {
   DatabaseHelper helper = DatabaseHelper();
   int dropdownvalue;
 
+  // TODO: Add _bannerAd
+  BannerAd _bannerAd;
+  BannerAd _bannerAd2;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // TODO: Load a banner ad
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: AdRequest(),
+      size: AdSize.banner,
+      listener:
+      BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _bannerAd = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          ad.dispose();
+        },
+      ),
+    ).load();
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: AdRequest(),
+      size: AdSize.banner,
+      listener:
+      BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _bannerAd2 = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          ad.dispose();
+        },
+      ),
+    ).load();
+  }
+  @override
+  void dispose() {
+    // TODO: Dispose a BannerAd object
+    _bannerAd?.dispose();
+    _bannerAd2?.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+
   Future<List<Level>> fetchLevels() async{
     UserAccountController userAccountController = Get.put(UserAccountController());
 
     var url = config.testURL+'/categories';
-    final response = await http.get(url);
+    final response = await http.get(Uri.parse(url));
     List<Level> levels = [];
     if (response.statusCode == 200) {
       var responseData = convert.jsonDecode(response.body);
@@ -51,12 +110,11 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
         Text(
           'Genius Revision',
-          style: TextStyle(
-            fontSize: MediaQuery.of(context).size.height/30,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        )
+          style:TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
+              fontSize: 30),
+        ),
       ],
     );
   }
@@ -126,6 +184,13 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
+  final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
+      primary: Colors.purple,
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      textStyle: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold)
+  );
 Widget _buildLoginButton(){
   UserAccountController userAccountController = Get.find();
     return Row(
@@ -133,37 +198,33 @@ Widget _buildLoginButton(){
       children: <Widget>[
         Container(
             height: 1.4 * (MediaQuery.of(context).size.height/20),
-            width: 5 * (MediaQuery.of(context).size.width/10),
+            width: 5 * (MediaQuery.of(context).size.width/15),
             margin: EdgeInsets.only(bottom: 20),
             child: Hero(
               tag:'dash',
-              child: RaisedButton(
-                elevation: 5.0,
-                color: Colors.pink,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0)
-                ),
+              child: ElevatedButton(
+                style: raisedButtonStyle,
                 onPressed: () async{
-                  User user= new User(userAccountController.username, userAccountController.level, 2);
-                  int result = await helper.insertUser(user);
-                  if (result != 0) {  // Success
-                    _showAlertDialog('Status', 'User Saved Successfully');
-                  } else {  // Failure
-                    _showAlertDialog('Status', 'Problem Saving User');
+                  if(userAccountController.username ==null || userAccountController.level == null){
+                    _showAlertDialog('Status', 'Username and option are required');
+                  }else{
+                    User user= new User(userAccountController.username, userAccountController.level, 2);
+                    int result = await helper.insertUser(user);
+                    if (result != 0) {  // Success
+                      _showAlertDialog('Status', 'User Saved Successfully');
+                    } else {  // Failure
+                      _showAlertDialog('Status', 'Problem Saving User');
+                    }
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));
                   }
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));
                 },
                 child: Text(
                   "Sign Up",
-                  style: TextStyle(
-                    color: Colors.white,
-                    letterSpacing: 1.5,
-                    fontSize: MediaQuery.of(context).size.height / 40,
-                  ),
+                  style:  TextStyle(color: Colors.white,fontSize: 20),
                 ),
               ),
-            )
-        )
+            ),
+        ),
       ],
     );
   }
@@ -189,7 +250,7 @@ Widget _buildLoginButton(){
               Radius.circular(20)
           ),
           child: Container(
-            height: MediaQuery.of(context).size.height * 0.6,
+            height: MediaQuery.of(context).size.height * 0.5,
             width: MediaQuery.of(context).size.width * 0.8,
             decoration: BoxDecoration(
               color: Colors.white,
@@ -228,7 +289,7 @@ Widget _buildLoginButton(){
     // TODO: implement build
     return SafeArea(
       child: Scaffold(
-        resizeToAvoidBottomPadding: false,
+        resizeToAvoidBottomInset: false,
         backgroundColor: Color(0xfff2f3f7),
         body: Stack(
           children: <Widget>[
@@ -248,8 +309,29 @@ Widget _buildLoginButton(){
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 1.0),
+                  child: Center(
+                    child: Container(
+                        width: 200,
+                        height: 150,
+                        /*decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(50.0)),*/
+                        child: Image.asset('assets/imgs/trophy.png')),
+                  ),
+                ),
                 _buildLogo(),
                 _buildContainer(),
+                if (_bannerAd2 != null)
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      width: _bannerAd2.size.width.toDouble(),
+                      height: _bannerAd2.size.height.toDouble(),
+                      child: AdWidget(ad: _bannerAd2),
+                    ),
+                  ),
               ],
             )
           ],

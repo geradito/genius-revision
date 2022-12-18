@@ -11,6 +11,6 @@ class Question extends Model
 
     public function Subject()
     {
-        return $this->belongsTo('App\Model\Subject');
+        return $this->belongsTo('App\Models\Subject');
     }
 }

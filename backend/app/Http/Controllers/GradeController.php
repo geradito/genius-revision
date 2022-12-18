@@ -18,7 +18,7 @@ class GradeController extends Controller
     public function index()
     {
         //
-        $grades = Grade::has('subjects')->all();
+        $grades = Grade::has('subjects')->get();
         return $grades;
     }
 
@@ -31,7 +31,8 @@ class GradeController extends Controller
     {
         //
         $categories = Category::all();
-        return view('grade.create')->with(['categories'=>$categories]);
+        $grades = Grade::has('subjects')->get();
+        return view('grade.create')->with(['categories'=>$categories,'grades'=>$grades]);
     }
 
     /**

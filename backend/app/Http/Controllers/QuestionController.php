@@ -30,7 +30,8 @@ class QuestionController extends Controller
     {
         //
         $subjects = Subject::all();
-        return view('question.create')->with(['subjects'=>$subjects]);
+        $questions = Question::all();
+        return view('question.create')->with(['subjects'=>$subjects, 'questions'=>$questions]);
     }
 
     /**
@@ -116,6 +117,9 @@ class QuestionController extends Controller
         ]);
        // $questionIds = explode(",", $request->previous_questions);
        $questionIds = $request->previous_questions;
+       if(sizeof($questionIds)>20){
+        return "[]";
+       }
        $question = Question::where('subject_id',$request->subject_id)->whereNotIn('id', $questionIds)->first();
        if($question ==null){
         return "[]";
