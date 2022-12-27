@@ -60,9 +60,8 @@ class SubjectController extends Controller
         $subject->name = $request->name;
         $subject->category_id = Grade::where('id',$request->grade_id)->first()['category_id'];
         $subject->grade_id = $request->grade_id;
-        //$subject->save();
-        return $subject;
-        //return redirect('subjects');
+        $subject->save();
+        return redirect('subjects/create');
     }
 
     /**

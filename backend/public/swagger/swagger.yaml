@@ -230,6 +230,105 @@ paths:
           description: Invalid ID supplied
         '404':
           description: Pet not found  
+  /quizzes/answers:
+    post:
+      tags:
+        - question
+      summary: Fetch next question in quiz
+      description: Returns subjects
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                previous_questions:          
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Question'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found  
+  /leaderboard/save:
+    post:
+      tags:
+        - leaderboard
+      summary: save user points in leaderboard
+      description: Returns success or error
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                device_finger_print:          
+                  type: string
+                device_id:  
+                  type: string
+                android_id:          
+                  type: string
+                username:          
+                  type: string
+                points:  
+                  type: integer
+                level:  
+                  type: integer
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/user'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found  
+  /leaderboard/{categoryId}:
+    get:
+      tags:
+        - leaderboard
+      summary: Fetch leaders by category ID
+      description: Returns users
+      operationId: categoryId
+      parameters:
+        - name: categoryId
+          in: path
+          description: of user leaders to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+          '200':
+            description: successful operation
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/user'          
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/user'
+          '400':
+            description: Invalid ID supplied
+          '404':
+            description: Pet not found  
 components:
   schemas:
     Category:
@@ -257,6 +356,21 @@ components:
           example: Mathematics
       xml:
         name: category
+ 
+    user:
+      type: object
+      properties:
+        username:
+          type: string
+          example: musialike
+        points:
+          type: integer
+          example: 130
+        level:
+          type: integer
+          example: 1
+      xml:
+        name: user
   
     Question:
       type: object

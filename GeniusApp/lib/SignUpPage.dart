@@ -1,5 +1,5 @@
-import 'package:dnlbook/LoginPage.dart';
-import 'package:dnlbook/controllers/UserAccountController.dart';
+import 'LoginPage.dart';
+import 'controllers/UserAccountController.dart';
 import 'package:flutter/material.dart';
 import 'config.dart' as config;
 import 'dart:convert' as convert;
@@ -8,6 +8,8 @@ import 'models/LevelModel.dart';
 import 'utils/DatabaseHelper.dart';
 import 'models/UserModel.dart';
 import 'package:http/http.dart' as http;
+import 'dart:math';
+import 'package:art_sweetalert/art_sweetalert.dart';
 
 // TODO: Import ad_helper.dart
 import 'utils/AdHelper.dart';
@@ -15,18 +17,17 @@ import 'utils/AdHelper.dart';
 // TODO: Import google_mobile_ads.dart
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-class SignUpPage extends StatefulWidget{
+class SignUpPage extends StatefulWidget {
   @override
   _SignUpPageState createState() => _SignUpPageState();
-
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-
   String email, password;
-  DateTime _selectedDate= DateTime.now();
+  DateTime _selectedDate = DateTime.now();
   DatabaseHelper helper = DatabaseHelper();
   int dropdownvalue;
+  Random random = new Random();
 
   // TODO: Add _bannerAd
   BannerAd _bannerAd;
@@ -40,8 +41,7 @@ class _SignUpPageState extends State<SignUpPage> {
       adUnitId: AdHelper.bannerAdUnitId,
       request: AdRequest(),
       size: AdSize.banner,
-      listener:
-      BannerAdListener(
+      listener: BannerAdListener(
         onAdLoaded: (ad) {
           setState(() {
             _bannerAd = ad as BannerAd;
@@ -57,8 +57,7 @@ class _SignUpPageState extends State<SignUpPage> {
       adUnitId: AdHelper.bannerAdUnitId,
       request: AdRequest(),
       size: AdSize.banner,
-      listener:
-      BannerAdListener(
+      listener: BannerAdListener(
         onAdLoaded: (ad) {
           setState(() {
             _bannerAd2 = ad as BannerAd;
@@ -71,6 +70,7 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
     ).load();
   }
+
   @override
   void dispose() {
     // TODO: Dispose a BannerAd object
@@ -80,20 +80,18 @@ class _SignUpPageState extends State<SignUpPage> {
     super.dispose();
   }
 
+  Future<List<Level>> fetchLevels() async {
+    UserAccountController userAccountController =
+        Get.put(UserAccountController());
 
-  Future<List<Level>> fetchLevels() async{
-    UserAccountController userAccountController = Get.put(UserAccountController());
-
-    var url = config.testURL+'/categories';
+    var url = config.testURL + '/categories';
     final response = await http.get(Uri.parse(url));
     List<Level> levels = [];
     if (response.statusCode == 200) {
       var responseData = convert.jsonDecode(response.body);
       //Creating a list to store input data;
       for (var data in responseData) {
-        Level level = Level(
-            id: data["id"],
-            name: data["name"]);
+        Level level = Level(id: data["id"], name: data["name"]);
         //Adding user to the list.
         levels.add(level);
       }
@@ -101,32 +99,41 @@ class _SignUpPageState extends State<SignUpPage> {
     return levels;
   }
 
-  Widget _buildLogo(){
+  Widget _buildLogo() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Padding(
           padding: EdgeInsets.symmetric(vertical: 20),
         ),
-        Text(
-          'Genius Revision',
-          style:TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w500,
-              fontSize: 30),
-        ),
+        RichText(
+            text: TextSpan(
+                text: "Quiz",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.bold),
+                children: [
+                  TextSpan(
+                      text: "HQ",
+                      style: TextStyle(
+                          color: Colors.pink,
+                          fontSize: 30.0,
+                          fontWeight: FontWeight.bold))
+                ])),
       ],
     );
   }
 
-  Widget _buildEmailRow(){
-    UserAccountController userAccountController = Get.put(UserAccountController());
+  Widget _buildEmailRow() {
+    UserAccountController userAccountController =
+        Get.put(UserAccountController());
     return Padding(
       padding: EdgeInsets.all(8),
       child: TextFormField(
-        maxLength: 10,
+        maxLength: 8,
         keyboardType: TextInputType.text,
-        onChanged: (value){
+        onChanged: (value) {
           // setState(() {
           //   email = value;
           // });
@@ -138,17 +145,16 @@ class _SignUpPageState extends State<SignUpPage> {
             color: Colors.cyan,
           ),
           labelText: 'Username',
-
         ),
       ),
     );
   }
 
-  Widget _buildPasswordRow(){
-
-    UserAccountController userAccountController = Get.put(UserAccountController());
+  Widget _buildPasswordRow() {
+    UserAccountController userAccountController =
+        Get.put(UserAccountController());
     // List of items in our dropdown menu
-    return  FutureBuilder<List<Level>>(
+    return FutureBuilder<List<Level>>(
       future: fetchLevels(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
@@ -171,7 +177,7 @@ class _SignUpPageState extends State<SignUpPage> {
             // change button value to selected value
             onChanged: (int newVal) {
               setState(() {
-                print("Selected city is "+newVal.toString());
+                print("Selected city is " + newVal.toString());
                 dropdownvalue = newVal;
                 userAccountController.level = dropdownvalue;
               });
@@ -187,68 +193,81 @@ class _SignUpPageState extends State<SignUpPage> {
   final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
       primary: Colors.purple,
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-      textStyle: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.bold)
-  );
-Widget _buildLoginButton(){
-  UserAccountController userAccountController = Get.find();
+      textStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold));
+  Widget _buildLoginButton() {
+    UserAccountController userAccountController = Get.find();
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Container(
-            height: 1.4 * (MediaQuery.of(context).size.height/20),
-            width: 5 * (MediaQuery.of(context).size.width/15),
-            margin: EdgeInsets.only(bottom: 20),
-            child: Hero(
-              tag:'dash',
-              child: ElevatedButton(
-                style: raisedButtonStyle,
-                onPressed: () async{
-                  if(userAccountController.username ==null || userAccountController.level == null){
-                    _showAlertDialog('Status', 'Username and option are required');
-                  }else{
-                    User user= new User(userAccountController.username, userAccountController.level, 2);
-                    int result = await helper.insertUser(user);
-                    if (result != 0) {  // Success
-                      _showAlertDialog('Status', 'User Saved Successfully');
-                    } else {  // Failure
-                      _showAlertDialog('Status', 'Problem Saving User');
-                    }
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));
+          height: 1.4 * (MediaQuery.of(context).size.height / 20),
+          width: 5 * (MediaQuery.of(context).size.width / 15),
+          margin: EdgeInsets.only(bottom: 20),
+          child: Hero(
+            tag: 'dash',
+            child: ElevatedButton(
+              style: raisedButtonStyle,
+              onPressed: () async {
+                if (userAccountController.username == null ||
+                    userAccountController.level == null) {
+                  _showAlertDialog(
+                      'Status', 'Username and option are required');
+                } else {
+
+                  User user = new User(userAccountController.username+random.nextInt(100).toString(),
+                      userAccountController.level, 2);
+                  int result = await helper.insertUser(user);
+                  if (result != 0) {
+                    // Success
+                    _successSweetAlert(user.name);
+                  } else {
+                    // Failure
+                    _showAlertDialog('Status', 'Problem Saving User');
                   }
-                },
-                child: Text(
-                  "Sign Up",
-                  style:  TextStyle(color: Colors.white,fontSize: 20),
-                ),
+                }
+              },
+              child: Text(
+                "Sign Up",
+                style: TextStyle(color: Colors.white, fontSize: 20),
               ),
             ),
+          ),
         ),
       ],
     );
   }
 
   void _showAlertDialog(String title, String message) {
-
     AlertDialog alertDialog = AlertDialog(
       title: Text(title),
       content: Text(message),
     );
-    showDialog(
-        context: context,
-        builder: (_) => alertDialog
-    );
+    showDialog(context: context, builder: (_) => alertDialog);
   }
 
-  Widget _buildContainer(){
+  void _successSweetAlert(username) async {
+    ArtDialogResponse response = await ArtSweetAlert.show(
+        context: context,
+        artDialogArgs: ArtDialogArgs(
+          type: ArtSweetAlertType.success,
+          title: "$username Saved Successfully",
+          text: "We have added some digits to your name to make it unique and you have been awarded 2 points"
+        ));
+    if (response == null || response.isTapConfirmButton) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoginPage(),
+        ),
+      );
+    }
+  }
+  Widget _buildContainer() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         ClipRRect(
-          borderRadius: BorderRadius.all(
-              Radius.circular(20)
-          ),
+          borderRadius: BorderRadius.all(Radius.circular(20)),
           child: Container(
             height: MediaQuery.of(context).size.height * 0.5,
             width: MediaQuery.of(context).size.width * 0.8,
@@ -267,14 +286,16 @@ Widget _buildLoginButton(){
                       "Sign Up",
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: MediaQuery.of(context).size.height/30,
+                        fontSize: MediaQuery.of(context).size.height / 30,
                       ),
                     ),
                   ],
                 ),
                 _buildEmailRow(),
                 _buildPasswordRow(),
-                SizedBox(height: 20,),
+                SizedBox(
+                  height: 20,
+                ),
                 _buildLoginButton(),
               ],
             ),
@@ -294,7 +315,7 @@ Widget _buildLoginButton(){
         body: Stack(
           children: <Widget>[
             Container(
-              height:MediaQuery.of(context).size.height * 0.7,
+              height: MediaQuery.of(context).size.height * 0.7,
               width: MediaQuery.of(context).size.width,
               child: Container(
                 decoration: BoxDecoration(
@@ -302,8 +323,7 @@ Widget _buildLoginButton(){
                     borderRadius: BorderRadius.only(
                       bottomLeft: const Radius.circular(70),
                       bottomRight: const Radius.circular(70),
-                    )
-                ),
+                    )),
               ),
             ),
             Column(
@@ -337,6 +357,6 @@ Widget _buildLoginButton(){
           ],
         ),
       ),
-    ) ;
+    );
   }
 }

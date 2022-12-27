@@ -1,6 +1,6 @@
-# dnlbook
+# geniusrevision
 
-book for DNL
+Revision App for School Pupils
 
 ## Getting Started
 

@@ -29,3 +29,7 @@ Route::get('/grades/{id}/subjects', [GradeController::class, 'showSubjects']);
 Route::get('/subjects/{id}/questions', [SubjectController::class, 'showQuestions']);  
 Route::post('/subjects', [SubjectController::class, 'store']);  
 Route::post('/quizzes', [QuestionController::class, 'quiz']);  
+Route::post('/quizzes/answers', [QuestionController::class, 'quizAnswers']);  
+
+Route::get('/leaderboard/{id}', [CategoryController::class, 'leaderboard']);  
+Route::post('/leaderboard/save', [CategoryController::class, 'saveLeaderboard']);  

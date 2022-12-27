@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 
-class QuizController extends GetxController{
-
+class QuizController extends GetxController {
   int _categoryId = 0;
   int _gradeId = 0;
   int _subjectId = 0;
@@ -15,7 +14,6 @@ class QuizController extends GetxController{
   String _optionD = "";
   String _answer = "";
   int _score = 0;
-
 
   String get subjectName => _subjectName;
 
@@ -123,7 +121,7 @@ class QuizController extends GetxController{
 
   set previousQuizIds(List<int> value) {
     _previousQuizIds = value;
-       update();
+    update();
   }
 
 // void decreaseX(){

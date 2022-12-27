@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Grade;
 use App\Models\Subject;
+use App\Models\LeaderBoard;
 
 class CategoryController extends Controller
 {
@@ -65,6 +66,65 @@ class CategoryController extends Controller
     public function show($id)
     {
         //
+    }
+
+        /**
+     * 
+     *
+     *  * @return \Illuminate\Http\Response
+     */
+    public function leaderboard ($id)
+    {
+        // 
+        $leaderboards = Leaderboard::where('category_id', $id)->orderBy('points', 'desc')->get(['username','points','category_id']);    
+        return $leaderboards;
+    }
+       /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function saveLeaderboard (Request $request)
+    {
+        //     
+        $validatedData = $request->validate([
+            'device_finger_print' => ['required'],
+            'device_id' => ['required'],
+            'android_id' => ['required'],
+            'username' => ['required'],
+            'points' => ['required'],
+            'level' => ['required'],
+        ],
+        [
+            'device_finger_print.required' => 'Device Data is required',
+            'device_id.required' => 'Device Id is required',
+            'android_id.required' => 'Android Data is required',
+            'username.required' => 'Username is required',
+            'points.required' => 'Points is equired',
+            'level.required' => 'Level are equired',
+        ]);
+
+        $searchLeaderboard = Leaderboard::Where('username', $request->username)
+                                ->Where('category_id', $request->level)->first();
+        if($searchLeaderboard !=null){
+            if($request->points > $searchLeaderboard->points){
+                $searchLeaderboard->points = $request->points;
+                $searchLeaderboard->save();    
+            }
+            return $searchLeaderboard;
+        }else{
+            $leaderboard = new Leaderboard();
+            $leaderboard->device_finger_print = $request->device_finger_print;
+            $leaderboard->device_id = $request->device_id;
+            $leaderboard->android_id = $request->android_id;
+            $leaderboard->username = $request->username;
+            $leaderboard->points = $request->points;
+            $leaderboard->category_id = $request->level;
+            $leaderboard->save();
+            return $leaderboard;
+        }
+        
     }
 
     /**

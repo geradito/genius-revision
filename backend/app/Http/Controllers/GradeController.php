@@ -31,7 +31,7 @@ class GradeController extends Controller
     {
         //
         $categories = Category::all();
-        $grades = Grade::has('subjects')->get();
+        $grades = Grade::get();
         return view('grade.create')->with(['categories'=>$categories,'grades'=>$grades]);
     }
 

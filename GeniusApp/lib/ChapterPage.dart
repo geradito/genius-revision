@@ -1,6 +1,5 @@
-
 import 'package:flutter/material.dart';
-import 'LessonPage.dart';
+import 'QuizPage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'config.dart' as config;
@@ -15,15 +14,15 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 class ChapterPage extends StatefulWidget {
   @override
   _ChapterPageState createState() => _ChapterPageState();
-
 }
+
 class Subject {
   final int id;
   final String name;
 
   const Subject({
-     this.id,
-     this.name,
+    this.id,
+    this.name,
   });
 
   factory Subject.fromJson(Map<String, dynamic> json) {
@@ -33,9 +32,13 @@ class Subject {
     );
   }
 }
-class _ChapterPageState extends State<ChapterPage> {
 
-  final List<Color> colorCodes = <Color>[Colors.greenAccent, Colors.redAccent, Colors.blueAccent];
+class _ChapterPageState extends State<ChapterPage> {
+  final List<Color> colorCodes = <Color>[
+    Colors.greenAccent,
+    Colors.redAccent,
+    Colors.blueAccent
+  ];
 
   List<Subject> futureSubjects;
 
@@ -50,8 +53,7 @@ class _ChapterPageState extends State<ChapterPage> {
       adUnitId: AdHelper.bannerAdUnitId,
       request: AdRequest(),
       size: AdSize.banner,
-      listener:
-      BannerAdListener(
+      listener: BannerAdListener(
         onAdLoaded: (ad) {
           setState(() {
             _bannerAd = ad as BannerAd;
@@ -64,6 +66,7 @@ class _ChapterPageState extends State<ChapterPage> {
       ),
     ).load();
   }
+
   @override
   void dispose() {
     // TODO: Dispose a BannerAd object
@@ -71,6 +74,7 @@ class _ChapterPageState extends State<ChapterPage> {
     // TODO: implement dispose
     super.dispose();
   }
+
   // TODO: Add _kAdIndex
   static final _kAdIndex = 1;
 
@@ -82,20 +86,22 @@ class _ChapterPageState extends State<ChapterPage> {
     return rawIndex;
   }
 
-  Future<List<Subject>> fetchSubjects() async{
-    QuizController  quizController= Get.put(QuizController());
-    var url = config.testURL+'/grades/'+quizController.gradeId.toString()+'/subjects';
+  Future<List<Subject>> fetchSubjects() async {
+    QuizController quizController = Get.put(QuizController());
+    var url = config.testURL +
+        '/grades/' +
+        quizController.gradeId.toString() +
+        '/subjects';
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       var responseData = convert.jsonDecode(response.body);
-   //   var responseData = json.decode(response.body);
+      //   var responseData = json.decode(response.body);
 
       //Creating a list to store input data;
       List<Subject> subjects = [];
       for (var singleUser in responseData) {
-        Subject subject = Subject(
-            id: singleUser["id"],
-            name: singleUser["name"]);
+        Subject subject =
+            Subject(id: singleUser["id"], name: singleUser["name"]);
         //Adding user to the list.
         subjects.add(subject);
       }
@@ -108,31 +114,29 @@ class _ChapterPageState extends State<ChapterPage> {
   final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
       primary: Colors.purple,
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-      textStyle: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.bold)
-  );
+      textStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold));
   @override
   Widget build(BuildContext context) {
-    QuizController  quizController= Get.put(QuizController());
+    QuizController quizController = Get.put(QuizController());
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () {  Navigator.pop(context); },
+            onPressed: () {
+              Navigator.pop(context);
+            },
             tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
           ),
           title: Text("Select Subject"),
           backgroundColor: Colors.blueAccent,
         ),
-
         resizeToAvoidBottomInset: false,
         backgroundColor: Color(0xfff2f3f7),
         body: Stack(
           children: <Widget>[
             Container(
-              height:MediaQuery.of(context).size.height,
+              height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               child: Container(
                 decoration: BoxDecoration(
@@ -150,8 +154,7 @@ class _ChapterPageState extends State<ChapterPage> {
                         child: CircularProgressIndicator(),
                       ),
                     );
-                  }else
-                  if (snapshot.data.length == 0) {
+                  } else if (snapshot.data.length == 0) {
                     return Card(
                       color: Colors.white,
                       borderOnForeground: true,
@@ -160,15 +163,18 @@ class _ChapterPageState extends State<ChapterPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           ListTile(
-                            title: Text("Empty List",style: TextStyle(
-                              letterSpacing: 1.5,
-                              fontSize: MediaQuery.of(context).size.height / 40,
-                            )),
-                            subtitle: Text("Please Exercise patience as our team are adding more questions"),
+                            title: Text("Empty List",
+                                style: TextStyle(
+                                  letterSpacing: 1.5,
+                                  fontSize:
+                                      MediaQuery.of(context).size.height / 40,
+                                )),
+                            subtitle: Text(
+                                "Please Exercise patience as our team are adding more questions"),
                           ),
                           ElevatedButton(
                             style: raisedButtonStyle,
-                            onPressed: () async{
+                            onPressed: () async {
                               Navigator.pop(context);
                             },
                             child: Text(
@@ -176,101 +182,114 @@ class _ChapterPageState extends State<ChapterPage> {
                               style: TextStyle(
                                 color: Colors.white,
                                 letterSpacing: 1.5,
-                                fontSize: MediaQuery.of(context).size.height / 40,
+                                fontSize:
+                                    MediaQuery.of(context).size.height / 40,
                               ),
                             ),
                           )
                         ],
                       ),
                     );
-                  }
-                  else {
-                    return ListView(
-                        children: <Widget>[
-                          Container(
-                              height: MediaQuery.of(context).size.height,
-                              width: MediaQuery.of(context).size.width * 0.8,
-                              decoration: BoxDecoration(
-                                color: Colors.greenAccent,
-                              ),
-                              child:ListView.separated(
-                                scrollDirection: Axis.vertical,
-                                shrinkWrap: true,
-                                padding: const EdgeInsets.all(8),
-                                itemCount: snapshot.data.length+ (_bannerAd != null ? 1 : 0),
-                                itemBuilder: (BuildContext context, int index) {
-                                // TODO: Render a banner ad
-                                if (_bannerAd != null && index == 0) {
+                  } else {
+                    return ListView(children: <Widget>[
+                      Container(
+                          height: MediaQuery.of(context).size.height,
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          decoration: BoxDecoration(
+                            color: Colors.greenAccent,
+                          ),
+                          child: ListView.separated(
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            padding: const EdgeInsets.all(8),
+                            itemCount: snapshot.data.length +
+                                (_bannerAd != null ? 1 : 0),
+                            itemBuilder: (BuildContext context, int index) {
+                              // TODO: Render a banner ad
+                              if (_bannerAd != null && index == 0) {
                                 return Container(
-                                width: _bannerAd.size.width.toDouble(),
-                                height: 72.0,
-                                alignment: Alignment.center,
-                                child: AdWidget(ad: _bannerAd),
+                                  width: _bannerAd.size.width.toDouble(),
+                                  height: 72.0,
+                                  alignment: Alignment.center,
+                                  child: AdWidget(ad: _bannerAd),
                                 );
-                                }else {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      quizController.subjectId =
-                                          snapshot.data[_getDestinationItemIndex(index)].id;
-                                      quizController.subjectName =
-                                          snapshot.data[_getDestinationItemIndex(index)].name;
-                                      Navigator.push(context, MaterialPageRoute(
-                                          builder: (context) => LessonPage()));
-                                    },
-                                    child: Card(
-                                      color: Colors.white,
-                                      borderOnForeground: true,
-                                      elevation: 10,
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          ListTile(
-                                            // title: Text("${phoneNumber[index]}",style: TextStyle(
-                                            title: Text(
-                                                snapshot.data[_getDestinationItemIndex(index)].name,
-                                                style: TextStyle(
-                                                  letterSpacing: 1.5,
-                                                  fontSize: MediaQuery
-                                                      .of(context)
-                                                      .size
-                                                      .height / 40,
-                                                )),
-                                            //    subtitle: Text("You will learn about ${callType[index]}"),
-                                            subtitle: Text(
-                                                "You will learn about " +
-                                                    snapshot.data[_getDestinationItemIndex(index)].name),
-                                          ),
-                                          // Row(
-                                          //   mainAxisAlignment: MainAxisAlignment.end,
-                                          //   children: <Widget>[
-                                          //     TextButton(
-                                          //       child: const Text('Dail'),
-                                          //       onPressed: () {/* ... */},
-                                          //     ),
-                                          //     const SizedBox(width: 8),
-                                          //     TextButton(
-                                          //       child: const Text('Call History'),
-                                          //       onPressed: () {/* ... */},
-                                          //     ),
-                                          //   ],
-                                          // ),
-                                        ],
-                                      ),
+                              } else {
+                                return GestureDetector(
+                                  onTap: () {
+                                    quizController.subjectId = snapshot
+                                        .data[_getDestinationItemIndex(index)]
+                                        .id;
+                                    quizController.subjectName = snapshot
+                                        .data[_getDestinationItemIndex(index)]
+                                        .name;
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                LessonPage()));
+                                  },
+                                  child: Card(
+                                    color: Colors.white,
+                                    borderOnForeground: true,
+                                    elevation: 10,
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        ListTile(
+                                          // title: Text("${phoneNumber[index]}",style: TextStyle(
+                                          title: Text(
+                                              snapshot
+                                                  .data[
+                                                      _getDestinationItemIndex(
+                                                          index)]
+                                                  .name,
+                                              style: TextStyle(
+                                                letterSpacing: 1.5,
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .height /
+                                                    40,
+                                              )),
+                                          //    subtitle: Text("You will learn about ${callType[index]}"),
+                                          subtitle: Text("You will learn about " +
+                                              snapshot
+                                                  .data[
+                                                      _getDestinationItemIndex(
+                                                          index)]
+                                                  .name),
+                                        ),
+                                        // Row(
+                                        //   mainAxisAlignment: MainAxisAlignment.end,
+                                        //   children: <Widget>[
+                                        //     TextButton(
+                                        //       child: const Text('Dail'),
+                                        //       onPressed: () {/* ... */},
+                                        //     ),
+                                        //     const SizedBox(width: 8),
+                                        //     TextButton(
+                                        //       child: const Text('Call History'),
+                                        //       onPressed: () {/* ... */},
+                                        //     ),
+                                        //   ],
+                                        // ),
+                                      ],
                                     ),
-                                  );
-                                }
-                                },
-                                separatorBuilder: (BuildContext context, int index) => const Divider(),
-                              )
-                          )
-                        ]
-                    );
+                                  ),
+                                );
+                              }
+                            },
+                            separatorBuilder:
+                                (BuildContext context, int index) =>
+                                    const Divider(),
+                          ))
+                    ]);
                   }
                 },
               ),
-            )],
+            )
+          ],
         ),
       ),
-    ) ;
+    );
   }
 }

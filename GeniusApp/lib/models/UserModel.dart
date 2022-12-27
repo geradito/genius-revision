@@ -4,16 +4,9 @@ class User {
   int _level;
   int _points;
 
+  User.withId(this._id, this._name, this._level, this._points);
 
-  User.withId(this._id,
-      this._name,
-      this._level,
-      this._points);
-
-  User(
-      this._name,
-      this._level,
-      this._points);
+  User(this._name, this._level, this._points);
 
   int get id => _id;
 
@@ -26,11 +19,11 @@ class User {
     };
   }
 
-  User.fromMapObject(Map<String,dynamic> map) {
-      this._id = map['id'];
-      this._name = map['name'];
-      this._level = map['level'];
-      this._points = int.parse(map['points']);
+  User.fromMapObject(Map<String, dynamic> map) {
+    this._id = map['id'];
+    this._name = map['name'];
+    this._level = map['level'];
+    this._points = int.parse(map['points']);
   }
 
   // Implement toString to make it easier to see information about

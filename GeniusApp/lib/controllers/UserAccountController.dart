@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-class UserAccountController extends GetxController{
+class UserAccountController extends GetxController {
   int _userId;
 
   int get userId => _userId;
@@ -10,7 +10,7 @@ class UserAccountController extends GetxController{
   }
 
   String _username;
-  int _level ;
+  int _level;
   DateTime _dateOfBirth;
   int _points = 0;
 
@@ -23,11 +23,11 @@ class UserAccountController extends GetxController{
     update();
   }
 
-
   set points(int points) {
     _points = points;
     update();
   }
+
   void increasePoints(int points) {
     _points += points;
     update();

@@ -117,16 +117,34 @@ class QuestionController extends Controller
         ]);
        // $questionIds = explode(",", $request->previous_questions);
        $questionIds = $request->previous_questions;
-       if(sizeof($questionIds)>20){
+       if(sizeof($questionIds)>=20){
         return "[]";
        }
-       $question = Question::where('subject_id',$request->subject_id)->whereNotIn('id', $questionIds)->first();
+       $question = Question::where('subject_id',$request->subject_id)->whereNotIn('id', $questionIds)->inRandomOrder()->first();
        if($question ==null){
         return "[]";
        }
        return $question;
     }
 
+    /**
+     * Display the specified resource.
+     *
+     * @param  Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function quizAnswers(Request $request)
+    {
+       $questionIds = $request->previous_questions;
+       if(sizeof($questionIds)<0){
+        return "[]";
+       }
+       $questions = Question::whereIn('id', $questionIds)->get(['question','diagram','answer']);
+       if($questions ==null){
+        return "[]";
+       }
+       return $questions;
+    }
     /**
      * Show the form for editing the specified resource.
      *
