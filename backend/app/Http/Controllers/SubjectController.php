@@ -18,7 +18,7 @@ class SubjectController extends Controller
     public function index()
     {
         //
-        $subjects = Subject::has('questions')->get();
+        $subjects = Subject::has('questions')->get(['id','name','category_id', 'grade_id']);
         return $subjects;
     }
 
@@ -83,7 +83,8 @@ class SubjectController extends Controller
     public function showQuestions($id)
     {
         //
-        $questions = Question::where('subject_id', $id)->get();
+        $questions = Question::where('subject_id', $id)
+        ->get(['id', 'question','diagram', 'option_a', 'option_b', 'option_c', 'option_d', 'answer','subject_id']);
         return $questions;
        
     }

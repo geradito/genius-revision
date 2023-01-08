@@ -17,7 +17,7 @@ class QuestionController extends Controller
     public function index()
     {
         //
-        $questions = Question::all();
+        $questions = Question::get(['id', 'question','diagram', 'option_a', 'option_b', 'option_c', 'option_d', 'answer','subject_id']);
         return $questions;
     }
 

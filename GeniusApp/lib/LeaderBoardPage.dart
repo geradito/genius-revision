@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'config.dart' as config;
@@ -195,7 +193,7 @@ class _LeaderBoardState extends State<LeaderBoard> {
 Future<List<LeaderBoardUser>> fetchLeaders() async {
   UserAccountController userAccountController = Get.put(UserAccountController());
 
-  var url = config.testURL + '/leaderboard/'+userAccountController.level.toString();
+  var url = config.serverURL + '/leaderboard/'+userAccountController.level.toString();
   final response = await http.get(Uri.parse(url));
   if (response.statusCode == 200) {
     var responseData = convert.jsonDecode(response.body);

@@ -1,9 +1,8 @@
 import 'package:QuizHQ/AnswerPage.dart';
+import 'package:QuizHQ/utils/HexColor.dart';
 
 import 'utils/DatabaseHelper.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'ResultPage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
@@ -66,18 +65,19 @@ class Question {
 const String testDevice = null;
 
 class _LessonPage extends State<LessonPage> {
-  List<Question> futureGrades;
   final player = AudioPlayer();
 
   // TODO: Add _bannerAd
   BannerAd _bannerAd;
   BannerAd _mediumBannerAd;
 
-  RewardedAd _rewardedAd;
+  RewardedAd _rewardedAnswerAd;
+  RewardedAd _rewardedPointAd;
   int _numRewardedLoadAttempts = 0;
 
   //Creating a list to store input data;
   Future<List<Question>> questions;
+  int newPoints = 0;
 
   @override
   void initState() {
@@ -87,7 +87,7 @@ class _LessonPage extends State<LessonPage> {
     questions = fetchQuestions();
     // TODO: Load a banner ad
     BannerAd(
-      adUnitId: AdHelper.bannerAdUnitId,
+      adUnitId: AdHelper.questionBannerAdUnitId,
       request: AdRequest(),
       size: AdSize.largeBanner,
       listener: BannerAdListener(
@@ -105,7 +105,7 @@ class _LessonPage extends State<LessonPage> {
 
     // TODO: Load a banner ad
     BannerAd(
-      adUnitId: AdHelper.bannerAdUnitId,
+      adUnitId: AdHelper.questionBannerAdUnitId,
       request: AdRequest(),
       size: AdSize.mediumRectangle,
       listener: BannerAdListener(
@@ -120,8 +120,6 @@ class _LessonPage extends State<LessonPage> {
         },
       ),
     ).load();
-
-    _createRewardedAd();
   }
 
   @override
@@ -129,14 +127,15 @@ class _LessonPage extends State<LessonPage> {
     // TODO: Dispose a BannerAd object
     _bannerAd?.dispose();
     _mediumBannerAd?.dispose();
-    _rewardedAd?.dispose();
+    _rewardedAnswerAd?.dispose();
+    _rewardedPointAd?.dispose();
     // TODO: implement dispose
     super.dispose();
   }
 
   Future<List<Question>> fetchQuestions() async {
     QuizController quizController = Get.put(QuizController());
-    var url = config.testURL + '/quizzes';
+    var url = config.serverURL + '/quizzes';
     final response = await http.post(
       Uri.parse(url),
       headers: <String, String>{
@@ -154,7 +153,27 @@ class _LessonPage extends State<LessonPage> {
       List<Question> questions = [];
 
       if (responseData.length == 0) {
-        return questions;
+          if (quizController.score < 1) {
+            newPoints = 0;
+          } else if (quizController.score > 0 && quizController.score <= 4) {
+            newPoints = 1;
+          } else if (quizController.score >= 5 && quizController.score <= 8) {
+            newPoints = 2;
+          } else if (quizController.score >= 9 &&
+              quizController.score <= 12) {
+            newPoints = 3;
+          } else if (quizController.score >= 13 &&
+              quizController.score <= 16) {
+            newPoints = 4;
+          } else if (quizController.score >= 17 &&
+              quizController.score <= 20) {
+            newPoints = 5;
+          }
+          UserAccountController userAccountController =
+          Get.put(UserAccountController());
+          userAccountController.increasePoints(newPoints);
+          updateUserPoints(newPoints);
+          return questions;
       }
       Question question = Question(
           id: responseData["id"],
@@ -193,15 +212,13 @@ class _LessonPage extends State<LessonPage> {
   }
 
   final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
-      primary: Colors.purple,
+      primary: HexColor("#1AA7EC"),
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       textStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold));
 
   @override
   Widget build(BuildContext context) {
     QuizController quizController = Get.put(QuizController());
-    UserAccountController userAccountController =
-        Get.put(UserAccountController());
 
     // TODO: implement build
     return Scaffold(
@@ -216,12 +233,11 @@ class _LessonPage extends State<LessonPage> {
           tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
         ),
         title: Text(quizController.subjectName),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: HexColor("#1AA7EC"),
       ),
       body: FutureBuilder(
         future: questions,
         builder: (BuildContext ctx, AsyncSnapshot snapshot) {
-          int newPoints = 0;
           if (snapshot.data == null) {
             return Container(
               child: Center(
@@ -229,26 +245,25 @@ class _LessonPage extends State<LessonPage> {
               ),
             );
           } else if (snapshot.data.length == 0) {
-            if (quizController.score < 1) {
-              newPoints = 0;
-            } else if (quizController.score > 0 && quizController.score <= 4) {
-              newPoints = 1;
-            } else if (quizController.score >= 5 && quizController.score <= 8) {
-              newPoints = 2;
-            } else if (quizController.score >= 9 &&
-                quizController.score <= 12) {
-              newPoints = 3;
-            } else if (quizController.score >= 13 &&
-                quizController.score <= 16) {
-              newPoints = 4;
-            } else if (quizController.score >= 17 &&
-                quizController.score <= 20) {
-              newPoints = 5;
-            }
-
-            userAccountController.increasePoints(newPoints);
-            updateUserPoints(newPoints);
-            return Column(
+            _createRewardedAnswerAd();
+            _createRewardedPointsAd();
+            // if (quizController.score < 1) {
+            //   newPoints = 0;
+            // } else if (quizController.score > 0 && quizController.score <= 4) {
+            //   newPoints = 1;
+            // } else if (quizController.score >= 5 && quizController.score <= 8) {
+            //   newPoints = 2;
+            // } else if (quizController.score >= 9 &&
+            //     quizController.score <= 12) {
+            //   newPoints = 3;
+            // } else if (quizController.score >= 13 &&
+            //     quizController.score <= 16) {
+            //   newPoints = 4;
+            // } else if (quizController.score >= 17 &&
+            //     quizController.score <= 20) {
+            //   newPoints = 5;
+            // }
+           return Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Align(
@@ -298,23 +313,14 @@ class _LessonPage extends State<LessonPage> {
                       ),
                     )),
                 // TODO: Display a banner when ready
-                if (_mediumBannerAd != null)
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: Container(
-                      width: _mediumBannerAd.size.width.toDouble(),
-                      height: _mediumBannerAd.size.height.toDouble(),
-                      child: AdWidget(ad: _mediumBannerAd),
-                    ),
-                  ),
-                Card(
+                  Card(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       const ListTile(
                         leading: Icon(Icons.play_circle_fill),
                         iconColor: Colors.red,
-                        title: Text('Watch a Video?'),
+                        title: Text('Extra Point?'),
                         subtitle: Text(
                             'Would you like to watch a video for 1 more point?'),
                       ),
@@ -324,7 +330,7 @@ class _LessonPage extends State<LessonPage> {
                           TextButton(
                             child: const Text('Watch Video'),
                             onPressed: () {
-                              _showRewardedAd();
+                              _showRewardedAdPoints();
                             },
                           ),
                         ],
@@ -332,7 +338,7 @@ class _LessonPage extends State<LessonPage> {
                     ],
                   ),
                 ),
-                Card(
+                  Card(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
@@ -349,11 +355,7 @@ class _LessonPage extends State<LessonPage> {
                           TextButton(
                             child: const Text('Watch Video'),
                             onPressed: () {
-                            //  _showRewardedAdAnswers();
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => AnswerPage()));
+                              _showRewardedAdAnswers();
                             },
                           ),
                         ],
@@ -361,6 +363,15 @@ class _LessonPage extends State<LessonPage> {
                     ],
                   ),
                 ),
+                if (_mediumBannerAd != null)
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      width: _mediumBannerAd.size.width.toDouble(),
+                      height: _mediumBannerAd.size.height.toDouble(),
+                      child: AdWidget(ad: _mediumBannerAd),
+                    ),
+                  ),
               ],
             );
           } else {
@@ -628,49 +639,69 @@ class _LessonPage extends State<LessonPage> {
     }
   }
 
-  void _createRewardedAd() {
+  void _createRewardedAnswerAd() {
     RewardedAd.load(
-        adUnitId: AdHelper.rewardedAdUnitId,
+        adUnitId: AdHelper.rewardedAnswersAdUnitId,
         request: AdRequest(),
         rewardedAdLoadCallback: RewardedAdLoadCallback(
           onAdLoaded: (RewardedAd ad) {
             print('$ad loaded.');
-            _rewardedAd = ad;
+            _rewardedAnswerAd = ad;
             _numRewardedLoadAttempts = 0;
           },
           onAdFailedToLoad: (LoadAdError error) {
             print('RewardedAd failed to load: $error');
-            _rewardedAd = null;
+            _rewardedAnswerAd = null;
             _numRewardedLoadAttempts += 1;
             if (_numRewardedLoadAttempts < maxFailedLoadAttempts) {
-              _createRewardedAd();
+              _createRewardedAnswerAd();
+            }
+          },
+        ));
+  }
+  void _createRewardedPointsAd() {
+    RewardedAd.load(
+        adUnitId: AdHelper.rewardedPointsAdUnitId,
+        request: AdRequest(),
+        rewardedAdLoadCallback: RewardedAdLoadCallback(
+          onAdLoaded: (RewardedAd ad) {
+            print('$ad loaded.');
+            _rewardedPointAd = ad;
+            _numRewardedLoadAttempts = 0;
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            print('RewardedAd failed to load: $error');
+            _rewardedPointAd = null;
+            _numRewardedLoadAttempts += 1;
+            if (_numRewardedLoadAttempts < maxFailedLoadAttempts) {
+              _createRewardedPointsAd();
             }
           },
         ));
   }
 
-  void _showRewardedAd() {
-    if (_rewardedAd == null) {
+  void _showRewardedAdPoints() {
+    if (_rewardedPointAd == null) {
       print('Warning: attempt to show rewarded before loaded.');
       return;
     }
-    _rewardedAd.fullScreenContentCallback = FullScreenContentCallback(
+    _rewardedPointAd.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent: (RewardedAd ad) =>
           print('ad onAdShowedFullScreenContent.'),
       onAdDismissedFullScreenContent: (RewardedAd ad) {
         print('$ad onAdDismissedFullScreenContent.');
         ad.dispose();
-        _createRewardedAd();
+        _createRewardedPointsAd();
       },
       onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
         print('$ad onAdFailedToShowFullScreenContent: $error');
         ad.dispose();
-        _createRewardedAd();
+        _createRewardedPointsAd();
       },
     );
 
-    _rewardedAd.setImmersiveMode(true);
-    _rewardedAd.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+    _rewardedPointAd.setImmersiveMode(true);
+    _rewardedPointAd.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
       print('$ad with reward $RewardItem(${reward.amount}, ${reward.type})');
       UserAccountController userAccountController =
           Get.put(UserAccountController());
@@ -679,37 +710,37 @@ class _LessonPage extends State<LessonPage> {
       _showAlertDialog(
           "1 point awarded", "Your earned points will reflect on home page");
     });
-    _rewardedAd = null;
+    _rewardedPointAd = null;
   }
 
   void _showRewardedAdAnswers() {
-    if (_rewardedAd == null) {
+    if (_rewardedAnswerAd == null) {
       print('Warning: attempt to show rewarded before loaded.');
       return;
     }
-    _rewardedAd.fullScreenContentCallback = FullScreenContentCallback(
+    _rewardedAnswerAd.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent: (RewardedAd ad) =>
           print('ad onAdShowedFullScreenContent.'),
       onAdDismissedFullScreenContent: (RewardedAd ad) {
         print('$ad onAdDismissedFullScreenContent.');
         ad.dispose();
-        _createRewardedAd();
+        _createRewardedAnswerAd();
       },
       onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
         print('$ad onAdFailedToShowFullScreenContent: $error');
         ad.dispose();
-        _createRewardedAd();
+        _createRewardedAnswerAd();
       },
     );
 
-    _rewardedAd.setImmersiveMode(true);
-    _rewardedAd.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+    _rewardedAnswerAd.setImmersiveMode(true);
+    _rewardedAnswerAd.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
       print('$ad with reward $RewardItem(${reward.amount}, ${reward.type})');
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => AnswerPage()));
     });
-    _rewardedAd = null;
+    _rewardedAnswerAd = null;
   }
 }

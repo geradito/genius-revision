@@ -1,3 +1,5 @@
+import 'package:QuizHQ/utils/HexColor.dart';
+
 import 'LoginPage.dart';
 import 'controllers/UserAccountController.dart';
 import 'package:flutter/material.dart';
@@ -23,44 +25,27 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  String email, password;
-  DateTime _selectedDate = DateTime.now();
+  String username;
+  int userLevel;
   DatabaseHelper helper = DatabaseHelper();
   int dropdownvalue;
   Random random = new Random();
 
   // TODO: Add _bannerAd
   BannerAd _bannerAd;
-  BannerAd _bannerAd2;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     // TODO: Load a banner ad
     BannerAd(
-      adUnitId: AdHelper.bannerAdUnitId,
+      adUnitId: AdHelper.generalBannerAdUnitId,
       request: AdRequest(),
-      size: AdSize.banner,
+      size: AdSize.fullBanner,
       listener: BannerAdListener(
         onAdLoaded: (ad) {
           setState(() {
             _bannerAd = ad as BannerAd;
-          });
-        },
-        onAdFailedToLoad: (ad, err) {
-          print('Failed to load a banner ad: ${err.message}');
-          ad.dispose();
-        },
-      ),
-    ).load();
-    BannerAd(
-      adUnitId: AdHelper.bannerAdUnitId,
-      request: AdRequest(),
-      size: AdSize.banner,
-      listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          setState(() {
-            _bannerAd2 = ad as BannerAd;
           });
         },
         onAdFailedToLoad: (ad, err) {
@@ -75,16 +60,12 @@ class _SignUpPageState extends State<SignUpPage> {
   void dispose() {
     // TODO: Dispose a BannerAd object
     _bannerAd?.dispose();
-    _bannerAd2?.dispose();
     // TODO: implement dispose
     super.dispose();
   }
 
   Future<List<Level>> fetchLevels() async {
-    UserAccountController userAccountController =
-        Get.put(UserAccountController());
-
-    var url = config.testURL + '/categories';
+    var url = config.serverURL + '/categories';
     final response = await http.get(Uri.parse(url));
     List<Level> levels = [];
     if (response.statusCode == 200) {
@@ -117,7 +98,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   TextSpan(
                       text: "HQ",
                       style: TextStyle(
-                          color: Colors.pink,
+                          color: Colors.red,
                           fontSize: 30.0,
                           fontWeight: FontWeight.bold))
                 ])),
@@ -125,19 +106,16 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _buildEmailRow() {
-    UserAccountController userAccountController =
-        Get.put(UserAccountController());
+  Widget _buildUsernameRow() {
     return Padding(
       padding: EdgeInsets.all(8),
       child: TextFormField(
         maxLength: 8,
         keyboardType: TextInputType.text,
         onChanged: (value) {
-          // setState(() {
-          //   email = value;
-          // });
-          userAccountController.username = value;
+          setState(() {
+            username = value.removeAllWhitespace.capitalizeFirst;
+          });
         },
         decoration: InputDecoration(
           prefixIcon: Icon(
@@ -150,9 +128,7 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _buildPasswordRow() {
-    UserAccountController userAccountController =
-        Get.put(UserAccountController());
+  Widget _buildUserLevelRow() {
     // List of items in our dropdown menu
     return FutureBuilder<List<Level>>(
       future: fetchLevels(),
@@ -165,7 +141,6 @@ class _SignUpPageState extends State<SignUpPage> {
             // Down Arrow Icon
             icon: const Icon(Icons.keyboard_arrow_down),
             hint: Text('Choose option'),
-
             // Array list of items
             items: data.map((Level item) {
               return DropdownMenuItem(
@@ -177,9 +152,9 @@ class _SignUpPageState extends State<SignUpPage> {
             // change button value to selected value
             onChanged: (int newVal) {
               setState(() {
-                print("Selected city is " + newVal.toString());
+                print("Selected option is " + newVal.toString());
                 dropdownvalue = newVal;
-                userAccountController.level = dropdownvalue;
+                userLevel = dropdownvalue;
               });
             },
           );
@@ -191,7 +166,7 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
-      primary: Colors.purple,
+      primary: HexColor("#1AA7EC"),
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       textStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold));
   Widget _buildLoginButton() {
@@ -208,14 +183,14 @@ class _SignUpPageState extends State<SignUpPage> {
             child: ElevatedButton(
               style: raisedButtonStyle,
               onPressed: () async {
-                if (userAccountController.username == null ||
-                    userAccountController.level == null) {
+                if (username == null ||
+                    userLevel == null) {
                   _showAlertDialog(
                       'Status', 'Username and option are required');
                 } else {
 
-                  User user = new User(userAccountController.username+random.nextInt(100).toString(),
-                      userAccountController.level, 2);
+                  User user = new User(username+random.nextInt(100).toString(),
+                      userLevel, 2);
                   int result = await helper.insertUser(user);
                   if (result != 0) {
                     // Success
@@ -251,7 +226,7 @@ class _SignUpPageState extends State<SignUpPage> {
         artDialogArgs: ArtDialogArgs(
           type: ArtSweetAlertType.success,
           title: "$username Saved Successfully",
-          text: "We have added some digits to your name to make it unique and you have been awarded 2 points"
+          text: "We have added digits to make your name unique and you have been awarded 2 points"
         ));
     if (response == null || response.isTapConfirmButton) {
       Navigator.pushReplacement(
@@ -291,8 +266,8 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                   ],
                 ),
-                _buildEmailRow(),
-                _buildPasswordRow(),
+                _buildUsernameRow(),
+                _buildUserLevelRow(),
                 SizedBox(
                   height: 20,
                 ),
@@ -319,7 +294,7 @@ class _SignUpPageState extends State<SignUpPage> {
               width: MediaQuery.of(context).size.width,
               child: Container(
                 decoration: BoxDecoration(
-                    color: Colors.blueAccent,
+                    color: HexColor("#1AA7EC"),
                     borderRadius: BorderRadius.only(
                       bottomLeft: const Radius.circular(70),
                       bottomRight: const Radius.circular(70),
@@ -343,13 +318,13 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 _buildLogo(),
                 _buildContainer(),
-                if (_bannerAd2 != null)
+                if (_bannerAd != null)
                   Align(
                     alignment: Alignment.topCenter,
                     child: Container(
-                      width: _bannerAd2.size.width.toDouble(),
-                      height: _bannerAd2.size.height.toDouble(),
-                      child: AdWidget(ad: _bannerAd2),
+                      width: _bannerAd.size.width.toDouble(),
+                      height: _bannerAd.size.height.toDouble(),
+                      child: AdWidget(ad: _bannerAd),
                     ),
                   ),
               ],

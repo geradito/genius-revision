@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Genius App</title>
+        <title>QuizHQ App</title>
 
         <!-- Fonts -->
         <link href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
@@ -38,9 +38,10 @@
 
             <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
                 <div class="flex justify-center pt-8 sm:justify-start sm:pt-0">
-                    <h1>Genius WebApp</h1>
+                    <h1>QuizHQ WebApp</h1>
                 </div>
-
+                <a href="docs" target="_blank" rel="noopener noreferrer" class="underline text-gray-900 dark:text-white">Documenation</a>
+               
                 <div class="mt-8 bg-white dark:bg-gray-800 overflow-hidden shadow sm:rounded-lg">
                     <div class="grid grid-cols-1 md:grid-cols-2">
                         <div class="p-6">
@@ -98,7 +99,7 @@
 
                 <div class="flex justify-center mt-4 sm:items-center sm:justify-between">
                     <div class="ml-4 text-center text-sm text-gray-500 sm:text-right sm:ml-0">
-                        GeniusApp v1.0.0
+                        QuizHQ v1.0.0
                     </div>
                 </div>
             </div>

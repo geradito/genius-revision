@@ -18,7 +18,7 @@ class GradeController extends Controller
     public function index()
     {
         //
-        $grades = Grade::has('subjects')->get();
+        $grades = Grade::has('subjects')->get(['id','name']);
         return $grades;
     }
 
@@ -82,7 +82,7 @@ class GradeController extends Controller
     public function showSubjects($id)
     {
         //
-        $subjects = Subject::has('questions')->where('grade_id', $id)->get();
+        $subjects = Subject::has('questions')->where('grade_id', $id)->get(['id','name','grade_id']);
         return $subjects;
     }
     

@@ -1,3 +1,5 @@
+import 'package:QuizHQ/utils/HexColor.dart';
+
 import 'LeaderBoardPage.dart';
 import 'package:flutter/material.dart';
 import 'ChapterPage.dart';
@@ -48,9 +50,9 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     // TODO: Load a banner ad
     BannerAd(
-      adUnitId: AdHelper.bannerAdUnitId,
+      adUnitId: AdHelper.generalBannerAdUnitId,
       request: AdRequest(),
-      size: AdSize.banner,
+      size: AdSize.fullBanner,
       listener: BannerAdListener(
         onAdLoaded: (ad) {
           setState(() {
@@ -92,7 +94,7 @@ class _HomePageState extends State<HomePage> {
         userAccountController.points.toString() +
         'pts';
 
-    var url = config.testURL +
+    var url = config.serverURL +
         '/categories/' +
         userAccountController.level.toString() +
         '/grades';
@@ -131,8 +133,8 @@ class _HomePageState extends State<HomePage> {
             },
             tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
           ),
-          title: Text(title.toString()),
-          backgroundColor: Colors.blueAccent,
+          title: Text(title==null?'':title.toString()),
+          backgroundColor: HexColor("#1AA7EC"),
           actions: <Widget>[
             TextButton(
               style: leaderBoardStyle,
@@ -140,12 +142,12 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => LeaderBoard()));
               },
-              child: const Text('LeaderBoard'),
+              child: const Icon(Icons.leaderboard),
             ),
           ],
         ),
         resizeToAvoidBottomInset: false,
-        backgroundColor: Colors.greenAccent,
+        backgroundColor: Colors.white,
         body: Stack(
           children: <Widget>[
             Container(

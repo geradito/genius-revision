@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:QuizHQ/utils/HexColor.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'config.dart' as config;
@@ -39,9 +40,9 @@ class _AnswerPage extends State<AnswerPage> {
 
     // TODO: Load a banner ad
     BannerAd(
-      adUnitId: AdHelper.bannerAdUnitId,
+      adUnitId: AdHelper.generalBannerAdUnitId,
       request: AdRequest(),
-      size: AdSize.banner,
+      size: AdSize.fullBanner,
       listener: BannerAdListener(
         onAdLoaded: (ad) {
           setState(() {
@@ -77,9 +78,6 @@ class _AnswerPage extends State<AnswerPage> {
 
   @override
   Widget build(BuildContext context) {
-
-    var r = TextStyle(color: Colors.purpleAccent, fontSize: 34);
-
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -90,7 +88,7 @@ class _AnswerPage extends State<AnswerPage> {
           tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
         ),
         title: Text("Answers"),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: HexColor("#1AA7EC"),
       ),
       body: FutureBuilder(
         future: questions,
@@ -208,7 +206,7 @@ class _AnswerPage extends State<AnswerPage> {
 
 Future<List<Question>> fetchAnswers() async {
   QuizController quizController = Get.put(QuizController());
-  var url = config.testURL + '/quizzes/answers';
+  var url = config.serverURL + '/quizzes/answers';
   final response = await http.post(
     Uri.parse(url),
     headers: <String, String>{

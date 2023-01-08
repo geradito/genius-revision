@@ -1,5 +1,4 @@
-import 'dart:typed_data';
-
+import 'package:QuizHQ/utils/HexColor.dart';
 import 'package:flutter/material.dart';
 import 'SignUpPage.dart';
 import 'HomePage.dart';
@@ -9,7 +8,6 @@ import 'utils/DatabaseHelper.dart';
 import 'models/UserModel.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'dart:io';
 import 'package:url_launcher/url_launcher.dart';
@@ -28,7 +26,6 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixin {
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  File _imageFile;
 
   //Create an instance of ScreenshotController
   ScreenshotController screenshotController = ScreenshotController();
@@ -36,11 +33,6 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
   List<User> userList;
   int count = 0;
 
-  final List<Color> colorCodes = <Color>[
-    Colors.greenAccent,
-    Colors.redAccent,
-    Colors.blueAccent
-  ];
 
 // TODO: Add _bannerAd
   BannerAd _bannerAd;
@@ -50,9 +42,9 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
     super.initState();
     // TODO: Load a banner ad
     BannerAd(
-      adUnitId: AdHelper.bannerAdUnitId,
+      adUnitId: AdHelper.generalBannerAdUnitId,
       request: AdRequest(),
-      size: AdSize.banner,
+      size: AdSize.fullBanner,
       listener: BannerAdListener(
         onAdLoaded: (ad) {
           setState(() {
@@ -91,7 +83,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
   }
 
   final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
-      primary: Colors.purple,
+      primary: HexColor("#1AA7EC"),
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       textStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold));
   @override
@@ -113,7 +105,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
               width: MediaQuery.of(context).size.width,
               child: Container(
                 decoration: BoxDecoration(
-                    color: Colors.blueAccent,
+                    color: HexColor("#1AA7EC"),
                     borderRadius: BorderRadius.only(
                       bottomLeft: const Radius.circular(70),
                       bottomRight: const Radius.circular(70),
@@ -148,7 +140,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                               TextSpan(
                                   text: "HQ",
                                   style: TextStyle(
-                                      color: Colors.pink,
+                                      color: Colors.red,
                                       fontSize: 30.0,
                                       fontWeight: FontWeight.bold))
                             ]))),
@@ -321,7 +313,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
 }
 
 void _launchRateURL() async {
-  const url = 'https://play.google.com/store/apps/details?id=com.eczpastpapers';
+  const url = 'https://play.google.com/store/apps/details?id=com.enrollzambia.quizhq';
   if (await canLaunch(url)) {
     await launch(url);
   } else {

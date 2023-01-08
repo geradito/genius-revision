@@ -1,10 +1,10 @@
 openapi: 3.0.3
 info:
-  title: Genius Revision - OpenAPI 3.0
+  title: QuizHQ - OpenAPI 3.0
   description: |-
-    This is a Genius Revision Server based on the OpenAPI 3.0 specification.
+    This is a QuizHQ Server based on the OpenAPI 3.0 specification.
     Some useful links:
-    - [The Genius Revision repository](https://github.com/swagger-api/swagger-petstore)
+    - [The QuizHQ repository](https://github.com/geradito/genius-revision)
     - [Developer Profile](https://enrollzambia.com/geraldchinyama/)
   contact:
     email: chinyamagerald@gmail.com
@@ -15,6 +15,7 @@ info:
 servers:
   - url: http://localhost:8000/api
   - url: http://192.168.43.203:8000/api
+  - url: https://quizhq.enrollzambia.com/api
 tags:
   - name: category
     description: Category Resource

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:QuizHQ/utils/HexColor.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'LoginPage.dart';
@@ -33,7 +34,7 @@ class _ResultPage extends State<ResultPage> {
   Get.put(UserAccountController());
 
   final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
-      primary: Colors.purple,
+      primary: HexColor("#1AA7EC"),
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       textStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold));
 
@@ -82,15 +83,15 @@ class _ResultPage extends State<ResultPage> {
                             text: TextSpan(
                                 text: "Quiz",
                                 style: TextStyle(
-                                    color: Colors.deepPurple,
-                                    fontSize: 30.0,
+                                    color: Colors.cyan,
+                                    fontSize: 40.0,
                                     fontWeight: FontWeight.bold),
                                 children: [
                                   TextSpan(
                                       text: "HQ",
                                       style: TextStyle(
                                           color: Colors.pink,
-                                          fontSize: 30.0,
+                                          fontSize: 40.0,
                                           fontWeight: FontWeight.bold))
                                 ])),
                         Opacity(
@@ -231,7 +232,7 @@ class _ResultPage extends State<ResultPage> {
   }
 
   Future<void> uploadPointsToServer() async {
-    var url = config.testURL + '/leaderboard/save';
+    var url = config.serverURL + '/leaderboard/save';
     String requestData = getJsonData();
     final response = await http.post(
       Uri.parse(url),
@@ -241,7 +242,6 @@ class _ResultPage extends State<ResultPage> {
       body: requestData,
     );
     if (response.statusCode == 201) {
-      var responseData = convert.jsonDecode(response.body);
 
       print('Success with status: ${response.statusCode}.');
     } else {

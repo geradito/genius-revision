@@ -1,3 +1,4 @@
+import 'package:QuizHQ/utils/HexColor.dart';
 import 'package:flutter/material.dart';
 import 'QuizPage.dart';
 import 'package:http/http.dart' as http;
@@ -50,9 +51,9 @@ class _ChapterPageState extends State<ChapterPage> {
     super.initState();
     // TODO: Load a banner ad
     BannerAd(
-      adUnitId: AdHelper.bannerAdUnitId,
+      adUnitId: AdHelper.generalBannerAdUnitId,
       request: AdRequest(),
-      size: AdSize.banner,
+      size: AdSize.fullBanner,
       listener: BannerAdListener(
         onAdLoaded: (ad) {
           setState(() {
@@ -88,7 +89,7 @@ class _ChapterPageState extends State<ChapterPage> {
 
   Future<List<Subject>> fetchSubjects() async {
     QuizController quizController = Get.put(QuizController());
-    var url = config.testURL +
+    var url = config.serverURL +
         '/grades/' +
         quizController.gradeId.toString() +
         '/subjects';
@@ -129,10 +130,10 @@ class _ChapterPageState extends State<ChapterPage> {
             tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
           ),
           title: Text("Select Subject"),
-          backgroundColor: Colors.blueAccent,
+          backgroundColor: HexColor("#1AA7EC"),
         ),
         resizeToAvoidBottomInset: false,
-        backgroundColor: Color(0xfff2f3f7),
+        backgroundColor: HexColor("#1AA7EC"),
         body: Stack(
           children: <Widget>[
             Container(
@@ -140,7 +141,7 @@ class _ChapterPageState extends State<ChapterPage> {
               width: MediaQuery.of(context).size.width,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.blueAccent,
+                  color: Colors.white,
                 ),
               ),
             ),
@@ -196,7 +197,7 @@ class _ChapterPageState extends State<ChapterPage> {
                           height: MediaQuery.of(context).size.height,
                           width: MediaQuery.of(context).size.width * 0.8,
                           decoration: BoxDecoration(
-                            color: Colors.greenAccent,
+                            color: Colors.white,
                           ),
                           child: ListView.separated(
                             scrollDirection: Axis.vertical,
