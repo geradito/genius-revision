@@ -21,6 +21,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/about', function () {
+    return view('about');
+});
+
+Route::get('/privacy', function () {
+    return view('privacy');
+});
+
 //documentation and api testing using swagger
 Route::get('/docs', function () {
     return view('swagger.index');
