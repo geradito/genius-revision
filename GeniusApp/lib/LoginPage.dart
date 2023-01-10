@@ -306,7 +306,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
   }
 
   _shareAppLink()  {
-     Share.text('', 'https://enrollzambia.com', 'text/plain');
+     Share.text('', 'https://play.google.com/store/apps/details?id=com.enrollzambia.quizhq', 'text/plain');
      print("shared");
   }
 
