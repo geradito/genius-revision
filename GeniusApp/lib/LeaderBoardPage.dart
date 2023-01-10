@@ -34,14 +34,14 @@ class _LeaderBoardState extends State<LeaderBoard> {
     margin: EdgeInsets.only(left: 15.0, top: 10.0),
     child: RichText(
     text: TextSpan(
-    text: "Leader",
+    text: "Quiz",
     style: TextStyle(
     color: Colors.deepPurple,
     fontSize: 30.0,
     fontWeight: FontWeight.bold),
     children: [
     TextSpan(
-    text: " Board",
+    text: "HQ",
     style: TextStyle(
     color: Colors.pink,
     fontSize: 30.0,
@@ -51,7 +51,7 @@ class _LeaderBoardState extends State<LeaderBoard> {
     Padding(
     padding: EdgeInsets.only(left: 15.0),
     child: Text(
-    'Global Rank Board: ',
+    'Level Leader Board: ',
     style: TextStyle(fontWeight: FontWeight.bold),
     ),
     ),

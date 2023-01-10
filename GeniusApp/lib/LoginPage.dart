@@ -321,7 +321,7 @@ void _launchRateURL() async {
   }
 }
 void _launchAboutURL() async {
-  const url = 'https://enrollzambia.com/geraldchinyama';
+  const url = 'https://quizhq.enrollzambia.com/about/';
   if (await canLaunch(url)) {
     await launch(url);
   } else {
